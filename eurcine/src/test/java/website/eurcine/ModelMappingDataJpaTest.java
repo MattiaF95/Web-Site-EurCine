@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
 import website.eurcine.model.Biglietto;
 import website.eurcine.model.Fila;
@@ -151,13 +151,14 @@ class ModelMappingDataJpaTest {
         ordine2.setTotale(new BigDecimal("10.00"));
         entityManager.persist(ordine2);
 
-        Biglietto duplicate = new Biglietto();
-        duplicate.setOrdine(ordine2);
-        duplicate.setProgrammazione(programmazione);
-        duplicate.setPosto(posto);
-        duplicate.setPrezzo(new BigDecimal("10.00"));
-        entityManager.persist(duplicate);
-
-        assertThrows(PersistenceException.class, () -> entityManager.flush());
+        assertThrows(PersistenceException.class, () -> {
+            Biglietto duplicate = new Biglietto();
+            duplicate.setOrdine(ordine2);
+            duplicate.setProgrammazione(programmazione);
+            duplicate.setPosto(posto);
+            duplicate.setPrezzo(new BigDecimal("10.00"));
+            entityManager.persist(duplicate);
+            entityManager.flush();
+        });
     }
 }

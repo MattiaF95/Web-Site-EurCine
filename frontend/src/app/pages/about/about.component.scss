@@ -1,0 +1,33 @@
+.page-about {
+  background-image: url('/assets/images/about-bg.jpg');
+  overflow-y: auto;
+}
+
+.about-content {
+  max-width: none;
+  width: 100%;
+  display: grid;
+  gap: 1.1rem;
+}
+
+.about-content .page__title {
+  margin: 0 0 0.8rem;
+  text-align: center;
+}
+
+.about-subtitle {
+  margin: 1.5rem 0 0;
+  font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+  line-height: 1.2;
+  color: #f2f7ff;
+  text-align: left;
+}
+
+.about-content .page__text {
+  margin: 0;
+  max-width: none;
+  color: #d4dfef;
+  text-align: left;
+  line-height: 1.75;
+  text-wrap: pretty;
+}
