@@ -12,36 +12,43 @@
 
     <div class="header-right">
       <nav class="site-nav" aria-label="Navigazione principale">
-        <div class="film-search film-search--in-nav">
-          <button type="button" class="film-search__icon" (click)="toggleSearch()" aria-label="Cerca film">🔍</button>
-          @if (searchOpen()) {
-            <div class="film-search__panel film-search__panel--left">
-              <input
-                class="film-search__input"
-                type="text"
-                placeholder="cerca film"
-                [ngModel]="filmSearch()"
-                (ngModelChange)="filmSearch.set($event)"
-                (keydown.enter)="goToFilmSearch()"
-              />
-              <button type="button" class="film-search__submit" (click)="goToFilmSearch()">Cerca</button>
-            </div>
+        <div class="mobile-nav">
+          <button type="button" class="mobile-nav__toggle" (click)="toggleMobileNav()" aria-label="Apri menu">⋯</button>
+        </div>
+
+        <div class="site-nav__popup" [class.is-open]="mobileNavOpen()">
+          <div class="film-search film-search--in-nav">
+            <button type="button" class="film-search__icon" (click)="toggleSearch()" aria-label="Cerca film">🔍</button>
+            @if (searchOpen()) {
+              <div class="film-search__panel film-search__panel--left">
+                <input
+                  class="film-search__input"
+                  type="text"
+                  placeholder="cerca film"
+                  [ngModel]="filmSearch()"
+                  (ngModelChange)="filmSearch.set($event)"
+                  (keydown.enter)="goToFilmSearch()"
+                />
+                <button type="button" class="film-search__submit" (click)="goToFilmSearch()">Cerca</button>
+              </div>
+            }
+          </div>
+
+          @for (item of navItems; track item.path) {
+            <a
+              [routerLink]="item.path"
+              (click)="closeMobileNav()"
+              routerLinkActive="is-active"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              {{ item.label }}
+            </a>
           }
         </div>
 
-        @for (item of navItems; track item.path) {
-          <a
-            [routerLink]="item.path"
-            routerLinkActive="is-active"
-            [routerLinkActiveOptions]="{ exact: true }"
-          >
-            {{ item.label }}
-          </a>
-        }
-
         @if (!isLoggedIn()) {
           <div class="profile-menu">
-            <button type="button" class="login-nav-btn" (click)="toggleProfile()">Login</button>
+            <button type="button" class="profile-menu__icon" (click)="toggleProfile()" aria-label="Login">🔐</button>
             @if (profileOpen()) {
               <div class="profile-menu__panel">
                 <p class="profile-menu__name">Accesso Admin</p>

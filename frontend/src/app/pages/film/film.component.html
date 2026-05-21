@@ -13,31 +13,15 @@
       </div>
       <app-film-view [film]="film" />
     } @else {
-      <div class="data-card data-card--centered">
-        <h2 class="data-card__title">Tutti i Film</h2>
-
-        <div class="wow-table-wrap">
-          <table class="wow-table">
-            <thead>
-              <tr>
-                <th>Titolo</th>
-                <th>Durata (min)</th>
-                <th>Lingua</th>
-                <th>Generi</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (film of films(); track film.titolo) {
-                <tr class="film-row" (click)="openFilm(film)">
-                  <td>{{ film.titolo }}</td>
-                  <td>{{ film.durataMin }}</td>
-                  <td>{{ film.linguaNome }}</td>
-                  <td>{{ film.generiNomi || '-' }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+      <div class="cards-grid cards-grid--films film-cards">
+        @for (film of films(); track film.titolo) {
+          <div class="showcase-card film-card" (click)="openFilm(film)">
+            <h2 class="showcase-card__title">{{ film.titolo }}</h2>
+            <p class="showcase-card__subtitle">{{ film.linguaNome }}</p>
+            <p class="showcase-card__meta"><strong>Durata:</strong> {{ film.durataMin }} min</p>
+            <p class="showcase-card__meta"><strong>Generi:</strong> {{ film.generiNomi || '-' }}</p>
+          </div>
+        }
       </div>
     }
   </div>

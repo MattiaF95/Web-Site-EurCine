@@ -37,8 +37,31 @@
 
 .site-nav {
   display: flex;
+  align-items: center;
   gap: clamp(0.55rem, 1.3vw, 1rem);
-  flex-wrap: wrap;
+}
+
+.site-nav__popup {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.55rem, 1.3vw, 1rem);
+}
+
+.mobile-nav {
+  display: none;
+  position: relative;
+}
+
+.mobile-nav__toggle {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(174, 202, 255, 0.4);
+  background: rgba(30, 69, 136, 0.68);
+  color: #eef5ff;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .site-nav a {
@@ -194,4 +217,87 @@
 
 .profile-menu__action--logout {
   background: rgba(73, 35, 35, 0.8);
+}
+
+@media (max-width: 900px) {
+  .site-header {
+    padding: 0.7rem 0.75rem;
+    gap: 0.6rem;
+  }
+
+  .brand {
+    gap: 0.45rem;
+    font-size: 0.95rem;
+  }
+
+  .brand img {
+    width: 2.6rem;
+    height: 1.8rem;
+  }
+
+  .site-nav {
+    gap: 0.45rem;
+    position: relative;
+  }
+
+  .mobile-nav {
+    display: block;
+  }
+
+  .site-nav__popup {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 2.45rem;
+    width: min(92vw, 340px);
+    border-radius: 0.7rem;
+    border: 1px solid rgba(174, 202, 255, 0.35);
+    background: rgba(8, 21, 45, 0.96);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.36);
+    padding: 0.7rem;
+    z-index: 20;
+  }
+
+  .site-nav__popup.is-open {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .site-nav__popup a {
+    display: block;
+    width: 100%;
+    text-align: left;
+    white-space: nowrap;
+    font-size: 0.88rem;
+    padding: 0.4rem 0.65rem;
+  }
+
+  .film-search__panel--left {
+    right: 0;
+    top: 2.2rem;
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .profile-menu__panel {
+    right: 0;
+    width: min(92vw, 320px);
+  }
+
+  .profile-menu__icon,
+  .mobile-nav__toggle {
+    width: 2.05rem;
+    height: 2.05rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-header {
+    align-items: flex-start;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-items: end;
+  }
 }

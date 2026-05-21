@@ -28,6 +28,7 @@ export class App {
   ] as const;
 
   readonly searchOpen = signal(false);
+  readonly mobileNavOpen = signal(false);
   readonly filmSearch = signal('');
   readonly profileOpen = signal(false);
   readonly session = this.authState.session;
@@ -47,7 +48,13 @@ export class App {
     this.searchOpen.set(!this.searchOpen());
   }
 
+  toggleMobileNav(): void {
+    this.profileOpen.set(false);
+    this.mobileNavOpen.set(!this.mobileNavOpen());
+  }
+
   toggleProfile(): void {
+    this.mobileNavOpen.set(false);
     this.searchOpen.set(false);
     this.profileOpen.set(!this.profileOpen());
   }
@@ -59,20 +66,28 @@ export class App {
     }
 
     this.searchOpen.set(false);
+    this.mobileNavOpen.set(false);
     void this.router.navigate(['/film'], { queryParams: { q: query } });
   }
 
   goToManageFilm(): void {
+    this.mobileNavOpen.set(false);
     this.profileOpen.set(false);
     void this.router.navigate(['/film']);
   }
 
   goToManageProgrammazione(): void {
+    this.mobileNavOpen.set(false);
     this.profileOpen.set(false);
     void this.router.navigate(['/programmazione']);
   }
 
+  closeMobileNav(): void {
+    this.mobileNavOpen.set(false);
+  }
+
   logout(): void {
+    this.mobileNavOpen.set(false);
     this.profileOpen.set(false);
     this.authState.logout();
     void this.router.navigate(['/home']);
@@ -80,6 +95,13 @@ export class App {
 
   onPageClick(event: MouseEvent): void {
     const target = event.target as HTMLElement | null;
+
+    if (this.mobileNavOpen()) {
+      const clickedInsideMobileNav = !!target?.closest('.mobile-nav');
+      if (!clickedInsideMobileNav) {
+        this.mobileNavOpen.set(false);
+      }
+    }
 
     if (this.profileOpen()) {
       const clickedInsideProfileMenu = !!target?.closest('.profile-menu');

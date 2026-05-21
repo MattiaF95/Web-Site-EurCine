@@ -24,3 +24,17 @@
 .film-row:hover td {
   background: rgba(86, 146, 248, 0.2);
 }
+
+.film-cards {
+  margin-top: 0.8rem;
+}
+
+.film-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.film-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.3);
+}

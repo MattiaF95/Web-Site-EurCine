@@ -202,3 +202,10 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 900px) {
+  .page {
+    background-position: center top;
+    background-size: auto 100%;
+  }
+}
