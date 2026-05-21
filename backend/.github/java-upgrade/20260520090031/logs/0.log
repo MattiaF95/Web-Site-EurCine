@@ -1,0 +1,10 @@
+2026-05-20T09:00:31.701Z [INFO] ----------------------invoke appmod-list-jdks----------------------
+2026-05-20T09:00:31.701Z [INFO] [Tool.invoke]({name: appmod-list-jdks, modelId: auto, input: {
+  "description": "Detect available JDK installations",
+  "projectPath": "/home/mattiafazi/progetti-java/eurcine"
+}}).
+2026-05-20T09:00:31.701Z [INFO] [Tool.invoke] do invoke.
+2026-05-20T09:00:31.748Z [INFO] [Tool.invoke]({result: {
+  "message": "We found following jdks in your system:\n\n1. Java 21.0.11\n   📁 Path: /usr/local/java/jdk-21.0.11+10/bin\n   🏷️ Source: PATH,JAVA_HOME\n\nTotal: 1 JDK installation(s) found"
+}}).
+2026-05-20T09:00:31.748Z [INFO] ----------------------invoked appmod-list-jdks----------------------

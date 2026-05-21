@@ -35,6 +35,41 @@ eurcine/.vscode/
 eurcine/src/main/resources/application.properties
 !eurcine/src/main/resources/application-example.properties
 
+# --- Backend (Spring Boot, renamed module path) ---
+backend/HELP.md
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+!backend/**/src/main/**/target/
+!backend/**/src/test/**/target/
+
+backend/.apt_generated
+backend/.classpath
+backend/.factorypath
+backend/.project
+backend/.settings/
+backend/.springBeans
+backend/.sts4-cache
+
+backend/.idea/
+backend/*.iws
+backend/*.iml
+backend/*.ipr
+
+backend/nbproject/private/
+backend/nbbuild/
+backend/dist/
+backend/nbdist/
+backend/.nb-gradle/
+backend/build/
+!backend/**/src/main/**/build/
+!backend/**/src/test/**/build/
+
+backend/.vscode/
+
+# Sensitive config (real credentials)
+backend/src/main/resources/application.properties
+!backend/src/main/resources/application-example.properties
+
 # Local Maven cache in repo
 eurcine/.m2/
 **/.m2/
