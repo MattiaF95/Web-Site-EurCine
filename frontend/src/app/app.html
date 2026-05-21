@@ -1,4 +1,4 @@
-<div class="site-shell">
+<div class="site-shell" (click)="onPageClick($event)">
   <header class="site-header">
     <a class="brand" routerLink="/home" aria-label="Eurcine Home">
       <img
@@ -37,6 +37,56 @@
           >
             {{ item.label }}
           </a>
+        }
+
+        @if (!isLoggedIn()) {
+          <div class="profile-menu">
+            <button type="button" class="login-nav-btn" (click)="toggleProfile()">Login</button>
+            @if (profileOpen()) {
+              <div class="profile-menu__panel">
+                <p class="profile-menu__name">Accesso Admin</p>
+                <input
+                  class="profile-menu__input"
+                  type="email"
+                  placeholder="Email"
+                  [ngModel]="loginEmail()"
+                  (ngModelChange)="loginEmail.set($event)"
+                />
+                <input
+                  class="profile-menu__input"
+                  type="password"
+                  placeholder="Password"
+                  [ngModel]="loginPassword()"
+                  (ngModelChange)="loginPassword.set($event)"
+                  (keydown.enter)="submitLogin()"
+                />
+                <button type="button" class="profile-menu__action" (click)="submitLogin()" [disabled]="loginLoading()">
+                  {{ loginLoading() ? 'Accesso...' : 'Accedi' }}
+                </button>
+                @if (loginError()) {
+                  <p class="profile-menu__error">{{ loginError() }}</p>
+                }
+              </div>
+            }
+          </div>
+        } @else if (session(); as user) {
+          <div class="profile-menu">
+            <button type="button" class="profile-menu__icon" (click)="toggleProfile()" aria-label="Area personale">👤</button>
+            @if (profileOpen()) {
+              <div class="profile-menu__panel">
+                @if (showWelcome()) {
+                  <app-login-success [session]="user" />
+                } @else {
+                  <p class="profile-menu__name">{{ user.nome }} {{ user.cognome }}</p>
+                  <p class="profile-menu__role">{{ user.ruolo }}</p>
+                  <p class="profile-menu__email">{{ user.email }}</p>
+                }
+                <button type="button" class="profile-menu__action" (click)="goToManageFilm()">Gestisci film</button>
+                <button type="button" class="profile-menu__action" (click)="goToManageProgrammazione()">Gestisci programmazione</button>
+                <button type="button" class="profile-menu__action profile-menu__action--logout" (click)="logout()">Logout</button>
+              </div>
+            }
+          </div>
         }
       </nav>
     </div>

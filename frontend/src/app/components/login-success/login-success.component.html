@@ -1,0 +1,14 @@
+<div class="login-success-banner" role="status" aria-live="polite">
+  <p class="login-success-banner__title">Login avvenuto con successo</p>
+  <p class="login-success-banner__subtitle">
+    Benvenuto {{ session().nome }} {{ session().cognome }} - Ruolo: {{ session().ruolo }}
+  </p>
+</div>
+
+<div class="data-card data-card--centered login-success-card">
+  <h2>Dettagli sessione</h2>
+  <p><strong>Admin:</strong> {{ session().nome }} {{ session().cognome }}</p>
+  <p><strong>Email:</strong> {{ session().email }}</p>
+  <p><strong>Ruolo:</strong> {{ session().ruolo }}</p>
+  <p><strong>Messaggio:</strong> {{ session().message }}</p>
+</div>

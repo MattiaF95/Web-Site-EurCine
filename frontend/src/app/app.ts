@@ -1,17 +1,23 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthStateService } from './core/service/auth-state.service';
+import { AuthService } from './core/service/auth.service';
+import { LoginSuccessComponent } from './components/login-success/login-success.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgOptimizedImage, FormsModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgOptimizedImage, FormsModule, LoginSuccessComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App {
   private readonly router = inject(Router);
+  private readonly authState = inject(AuthStateService);
+  private readonly authService = inject(AuthService);
 
   readonly navItems = [
     { label: 'Home', path: '/home' },
@@ -23,9 +29,27 @@ export class App {
 
   readonly searchOpen = signal(false);
   readonly filmSearch = signal('');
+  readonly profileOpen = signal(false);
+  readonly session = this.authState.session;
+  readonly isLoggedIn = this.authState.isLoggedIn;
+  readonly showWelcome = this.authState.showWelcome;
+  readonly loginEmail = signal('');
+  readonly loginPassword = signal('');
+  readonly loginLoading = signal(false);
+  readonly loginError = signal('');
+
+  constructor() {
+    this.authState.hydrateFromStorage();
+  }
 
   toggleSearch(): void {
+    this.profileOpen.set(false);
     this.searchOpen.set(!this.searchOpen());
+  }
+
+  toggleProfile(): void {
+    this.searchOpen.set(false);
+    this.profileOpen.set(!this.profileOpen());
   }
 
   goToFilmSearch(): void {
@@ -37,4 +61,65 @@ export class App {
     this.searchOpen.set(false);
     void this.router.navigate(['/film'], { queryParams: { q: query } });
   }
+
+  goToManageFilm(): void {
+    this.profileOpen.set(false);
+    void this.router.navigate(['/film']);
+  }
+
+  goToManageProgrammazione(): void {
+    this.profileOpen.set(false);
+    void this.router.navigate(['/programmazione']);
+  }
+
+  logout(): void {
+    this.profileOpen.set(false);
+    this.authState.logout();
+    void this.router.navigate(['/home']);
+  }
+
+  onPageClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement | null;
+
+    if (this.profileOpen()) {
+      const clickedInsideProfileMenu = !!target?.closest('.profile-menu');
+      if (!clickedInsideProfileMenu) {
+        this.profileOpen.set(false);
+      }
+    }
+
+    if (!this.showWelcome()) {
+      return;
+    }
+
+    const clickedInsideBanner = !!target?.closest('.login-success-banner');
+    if (!clickedInsideBanner) {
+      this.authState.consumeWelcome();
+    }
+  }
+
+  submitLogin(): void {
+    const email = this.loginEmail().trim();
+    const password = this.loginPassword();
+    if (!email || !password) {
+      this.loginError.set('Inserisci email e password.');
+      return;
+    }
+
+    this.loginLoading.set(true);
+    this.loginError.set('');
+
+    this.authService.login({ email, password }).subscribe({
+      next: (response) => {
+        this.authState.setFromLogin(response);
+        this.loginLoading.set(false);
+        this.loginPassword.set('');
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loginLoading.set(false);
+        this.loginError.set((err.error?.message as string) || 'Login non riuscito.');
+      }
+    });
+  }
+
 }

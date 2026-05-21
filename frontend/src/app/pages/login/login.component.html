@@ -1,0 +1,55 @@
+<section class="page page-login">
+  <div class="page__content page__content--wide login-content">
+    <div class="page__hero">
+      <h1 class="page__title">Login Admin</h1>
+      <p class="page__text">Accedi con le credenziali admin per gestire il cinema.</p>
+    </div>
+
+    @if (session(); as sessionData) {
+      @if (showWelcome()) {
+        <app-login-success [session]="sessionData" />
+        <div class="login-actions">
+          <button type="button" class="login-close" (click)="closeWelcome()">Continua</button>
+        </div>
+      } @else {
+        <div class="data-card data-card--centered login-card">
+          <h2 class="login-area-title">Area personale attiva</h2>
+          <p class="login-area-text">Sei autenticato come {{ sessionData.nome }} {{ sessionData.cognome }} ({{ sessionData.ruolo }}).</p>
+          <div class="login-actions">
+            <button type="button" class="login-logout" (click)="logout()">Logout</button>
+          </div>
+        </div>
+      }
+    } @else {
+      <div class="data-card data-card--centered login-card">
+        <label class="login-label" for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          class="login-input"
+          [ngModel]="email()"
+          (ngModelChange)="email.set($event)"
+          placeholder="admin@eurcine.it"
+        />
+
+        <label class="login-label" for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          class="login-input"
+          [ngModel]="password()"
+          (ngModelChange)="password.set($event)"
+          placeholder="••••••••"
+        />
+
+        <button type="button" class="login-submit" (click)="submit()" [disabled]="loading()">
+          {{ loading() ? 'Accesso in corso...' : 'Accedi' }}
+        </button>
+
+        @if (error()) {
+          <p class="login-error">{{ error() }}</p>
+        }
+      </div>
+    }
+  </div>
+</section>

@@ -124,6 +124,7 @@ Esempio un giorno.
 ### ENTITY
 
 Entita principali: `Film`, `Genere`, `Lingua`, `Sala`, `Fila`, `Posto`, `Programmazione`, `Ordine`, `Biglietto`.
+Entita utenti: `Utente` (astratta), `Admin` (estende `Utente`).
 
 ### Film
 
@@ -209,6 +210,28 @@ Note:
 Vincoli:
 - unique(`programmazione_id`, `posto_id`) per impedire doppia vendita posto.
 - Un ordine puo contenere piu biglietti.
+
+### Utente (astratta)
+
+- `id`
+- `nome`
+- `cognome`
+- `email` (univoca)
+- `password_hash`
+- `created_at`
+
+Note:
+- Classe base astratta per utenti applicativi.
+- Mappata con ereditarieta JPA `JOINED` per specializzazioni future.
+
+### Admin
+
+- `id` (fk + pk verso `utente.id` con strategia JOINED)
+- `ruolo`
+
+Note:
+- Estende `Utente`.
+- Tabella separata `admin` con campi specifici amministrativi.
 
 ### Altre migliorie logiche
 

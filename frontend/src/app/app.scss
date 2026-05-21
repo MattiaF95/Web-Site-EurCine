@@ -117,3 +117,81 @@
   padding: 0.45rem 0.7rem;
   cursor: pointer;
 }
+
+.login-nav-btn {
+  border-radius: 999px;
+  border: 1px solid rgba(174, 202, 255, 0.4);
+  background: rgba(30, 69, 136, 0.68);
+  color: #eef5ff;
+  padding: 0.38rem 0.78rem;
+  cursor: pointer;
+}
+
+.profile-menu {
+  position: relative;
+}
+
+.profile-menu__icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(174, 202, 255, 0.4);
+  background: rgba(30, 69, 136, 0.68);
+  color: #eef5ff;
+  cursor: pointer;
+}
+
+.profile-menu__panel {
+  position: absolute;
+  right: 0;
+  top: 2.3rem;
+  width: 300px;
+  border-radius: 0.7rem;
+  border: 1px solid rgba(174, 202, 255, 0.35);
+  background: rgba(8, 21, 45, 0.96);
+  padding: 0.7rem;
+  display: grid;
+  gap: 0.45rem;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.36);
+}
+
+.profile-menu__name {
+  margin: 0;
+  font-weight: 700;
+}
+
+.profile-menu__role,
+.profile-menu__email {
+  margin: 0;
+  color: #c9dbfa;
+  font-size: 0.85rem;
+}
+
+.profile-menu__action {
+  border-radius: 0.52rem;
+  border: 1px solid rgba(174, 202, 255, 0.35);
+  background: rgba(30, 69, 136, 0.6);
+  color: #eef5ff;
+  padding: 0.48rem 0.58rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.profile-menu__input {
+  width: 100%;
+  border-radius: 0.52rem;
+  border: 1px solid rgba(174, 202, 255, 0.35);
+  background: rgba(11, 25, 52, 0.92);
+  color: #eef5ff;
+  padding: 0.5rem 0.58rem;
+}
+
+.profile-menu__error {
+  margin: 0;
+  color: #ffd0d0;
+  font-size: 0.84rem;
+}
+
+.profile-menu__action--logout {
+  background: rgba(73, 35, 35, 0.8);
+}
