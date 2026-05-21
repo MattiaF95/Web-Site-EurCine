@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import website.eurcine.model.Programmazione;
+import website.eurcine.repository.projection.ProgrammazioneView;
 import website.eurcine.service.ProgrammazioneService;
 
 @RestController
@@ -20,7 +20,7 @@ public class ProgrammazioneController {
     }
 
     @GetMapping
-    public List<Programmazione> getAll() {
+    public List<ProgrammazioneView> getAll() {
         return programmazioneService.getAll();
     }
 }

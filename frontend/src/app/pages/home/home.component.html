@@ -1,42 +1,29 @@
 <section class="page page-home">
-  <div class="page__content">
-    <span class="page__kicker">Eurcine</span>
-    <h1 class="page__title">Il cinema che accende la tua serata</h1>
-    <p class="page__text">
-      Programmazione completa in tempo reale con sale, orari e prezzi.
-    </p>
-
-    <div class="data-card">
-      <h2 class="data-card__title">Tutta la Programmazione</h2>
-
-      @if (programmazioni$ | async; as programmazioni) {
-        <div class="wow-table-wrap">
-          <table class="wow-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Film</th>
-                <th>Sala</th>
-                <th>Inizio</th>
-                <th>Prezzo &lt;18</th>
-                <th>Prezzo &gt;=18</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (item of programmazioni; track item.id) {
-                <tr>
-                  <td>{{ item.id }}</td>
-                  <td>{{ item.film?.titolo ?? '-' }}</td>
-                  <td>{{ item.sala?.nome ?? '-' }}</td>
-                  <td>{{ item.startAt | date: 'dd/MM/yyyy HH:mm' }}</td>
-                  <td>{{ item.prezzoBasePre18 | currency: 'EUR' }}</td>
-                  <td>{{ item.prezzoBasePost18 | currency: 'EUR' }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
+  <div class="page__content page__content--wide">
+    <div class="page__hero">
+      <h1 class="page__title">Il cinema che accende la tua serata</h1>
+      <p class="page__text">
+        Programmazione completa in tempo reale con sale, orari e prezzi.
+      </p>
     </div>
+
+    <div class="page__notice">
+      Prezzo ridotto prima delle 18:00, prezzo standard dopo le 18:00. I film iniziano 15 minuti dopo
+      l'orario indicato.
+    </div>
+
+    @if (cards$ | async; as cards) {
+      <div class="cards-grid cards-grid--films">
+        @for (card of cards; track card.title) {
+          <app-showcase-card
+            [title]="card.title"
+            [subtitle]="card.subtitle"
+            [date]="card.date"
+            [times]="card.times"
+            [lineTwo]="card.lineTwo"
+          />
+        }
+      </div>
+    }
   </div>
 </section>

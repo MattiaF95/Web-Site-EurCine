@@ -2,8 +2,8 @@ package website.eurcine.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
-import website.eurcine.model.Sala;
 import website.eurcine.repository.SalaRepository;
+import website.eurcine.repository.projection.SalaView;
 
 @Service
 public class SaleService {
@@ -14,7 +14,7 @@ public class SaleService {
         this.salaRepository = salaRepository;
     }
 
-    public List<Sala> getAll() {
-        return salaRepository.findAll();
+    public List<SalaView> getAll() {
+        return salaRepository.findAllProjected();
     }
 }

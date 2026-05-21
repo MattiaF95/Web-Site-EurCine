@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import website.eurcine.model.Programmazione;
 import website.eurcine.repository.projection.ProgrammazioneGiornalieraView;
+import website.eurcine.repository.projection.ProgrammazioneView;
 
 public interface ProgrammazioneRepository extends JpaRepository<Programmazione, Long> {
 
@@ -22,8 +23,7 @@ public interface ProgrammazioneRepository extends JpaRepository<Programmazione, 
     );
 
     @Query("""
-        select p.id as programmazioneId,
-               f.titolo as filmTitolo,
+        select f.titolo as filmTitolo,
                p.startAt as startAt,
                s.nome as salaNome,
                (count(distinct po.id) - count(distinct b.id)) as postiDisponibili
@@ -42,4 +42,17 @@ public interface ProgrammazioneRepository extends JpaRepository<Programmazione, 
         LocalDateTime dayStart,
         LocalDateTime dayEnd
     );
+
+    @Query("""
+        select f.titolo as filmTitolo,
+               s.nome as salaNome,
+               p.startAt as startAt,
+               p.prezzoBasePre18 as prezzoBasePre18,
+               p.prezzoBasePost18 as prezzoBasePost18
+        from Programmazione p
+        join p.film f
+        join p.sala s
+        order by p.startAt asc
+        """)
+    List<ProgrammazioneView> findAllProjected();
 }

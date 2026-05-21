@@ -1,0 +1,19 @@
+<article class="showcase-card" [class.showcase-card--centered]="centered()" [class.showcase-card--large]="large()">
+  <h3 class="showcase-card__title">{{ title() }}</h3>
+
+  @if (subtitle()) {
+    <p class="showcase-card__subtitle">{{ subtitle() }}</p>
+  }
+
+  @if (date()) {
+    <p class="showcase-card__meta">{{ date() }}</p>
+  }
+
+  @if (times()) {
+    <p class="showcase-card__meta"><strong>Inizio:</strong> {{ times() }}</p>
+  }
+
+  @if (lineTwo()) {
+    <p class="showcase-card__meta">{{ lineTwo() }}</p>
+  }
+</article>

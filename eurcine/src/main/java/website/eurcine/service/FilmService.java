@@ -2,8 +2,8 @@ package website.eurcine.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
-import website.eurcine.model.Film;
 import website.eurcine.repository.FilmRepository;
+import website.eurcine.repository.projection.FilmView;
 
 @Service
 public class FilmService {
@@ -14,7 +14,7 @@ public class FilmService {
         this.filmRepository = filmRepository;
     }
 
-    public List<Film> getAll() {
-        return filmRepository.findAll();
+    public List<FilmView> getAll() {
+        return filmRepository.findAllProjected();
     }
 }

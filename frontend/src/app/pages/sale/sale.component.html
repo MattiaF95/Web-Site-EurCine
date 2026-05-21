@@ -1,34 +1,18 @@
 <section class="page page-sale">
-  <div class="page__content">
-    <span class="page__kicker">Sale</span>
-    <h1 class="page__title">Comfort, audio, immersione</h1>
-    <p class="page__text">
-      Elenco completo delle sale disponibili.
-    </p>
-
-    <div class="data-card">
-      <h2 class="data-card__title">Tutte le Sale</h2>
-
-      @if (sale$ | async; as sale) {
-        <div class="wow-table-wrap">
-          <table class="wow-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nome Sala</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (item of sale; track item.id) {
-                <tr>
-                  <td>{{ item.id }}</td>
-                  <td>{{ item.nome }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
+  <div class="page__content page__content--wide">
+    <div class="page__hero">
+      <h1 class="page__title">Comfort, audio, immersione</h1>
+      <p class="page__text">
+        Elenco completo delle sale disponibili.
+      </p>
     </div>
+
+    @if (cards$ | async; as cards) {
+      <div class="cards-grid cards-grid--sale">
+        @for (card of cards; track card.title) {
+          <app-showcase-card [title]="card.title" [subtitle]="card.subtitle" [centered]="true" [large]="true" />
+        }
+      </div>
+    }
   </div>
 </section>

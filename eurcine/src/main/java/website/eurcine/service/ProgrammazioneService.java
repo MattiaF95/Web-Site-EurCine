@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import website.eurcine.model.Programmazione;
 import website.eurcine.repository.ProgrammazioneRepository;
 import website.eurcine.repository.projection.ProgrammazioneGiornalieraView;
+import website.eurcine.repository.projection.ProgrammazioneView;
 
 @Service
 public class ProgrammazioneService {
@@ -17,8 +17,8 @@ public class ProgrammazioneService {
         this.programmazioneRepository = programmazioneRepository;
     }
 
-    public List<Programmazione> getAll() {
-        return programmazioneRepository.findAll();
+    public List<ProgrammazioneView> getAll() {
+        return programmazioneRepository.findAllProjected();
     }
 
     public List<ProgrammazioneGiornalieraView> getDailySchedule(LocalDate day) {

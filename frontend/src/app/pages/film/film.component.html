@@ -1,12 +1,13 @@
 <section class="page page-film">
-  <div class="page__content">
-    <span class="page__kicker">Film</span>
-    <h1 class="page__title">In sala ora</h1>
-    <p class="page__text">
-      Catalogo film completo con durata, lingua e generi.
-    </p>
+  <div class="page__content page__content--wide">
+    <div class="page__hero">
+      <h1 class="page__title">In sala ora</h1>
+      <p class="page__text">
+        Catalogo film completo con durata, lingua e generi.
+      </p>
+    </div>
 
-    <div class="data-card">
+    <div class="data-card data-card--centered">
       <h2 class="data-card__title">Tutti i Film</h2>
 
       @if (films$ | async; as films) {
@@ -14,7 +15,6 @@
           <table class="wow-table">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Titolo</th>
                 <th>Durata (min)</th>
                 <th>Lingua</th>
@@ -22,13 +22,12 @@
               </tr>
             </thead>
             <tbody>
-              @for (film of films; track film.id) {
+              @for (film of films; track film.titolo) {
                 <tr>
-                  <td>{{ film.id }}</td>
                   <td>{{ film.titolo }}</td>
                   <td>{{ film.durataMin }}</td>
-                  <td>{{ film.lingua?.nome ?? '-' }}</td>
-                  <td>{{ getGeneri(film) }}</td>
+                  <td>{{ film.linguaNome }}</td>
+                  <td>{{ film.generiNomi || '-' }}</td>
                 </tr>
               }
             </tbody>

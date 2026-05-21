@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 
 public interface ProgrammazioneGiornalieraView {
 
-    Long getProgrammazioneId();
-
     String getFilmTitolo();
 
     LocalDateTime getStartAt();
