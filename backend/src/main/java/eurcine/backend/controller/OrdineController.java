@@ -1,7 +1,6 @@
 package eurcine.backend.controller;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +14,6 @@ import eurcine.backend.service.OrdineService;
 
 @RestController
 @RequestMapping("/api/ordini")
-@CrossOrigin(origins = "http://localhost:4200")
 public class OrdineController {
 
     private final OrdineService ordineService;

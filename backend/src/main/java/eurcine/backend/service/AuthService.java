@@ -14,9 +14,11 @@ import eurcine.backend.repository.AdminSessionRepository;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class AuthService {
+    private static final BCryptPasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     private final AdminRepository adminRepository;
     private final AdminSessionRepository adminSessionRepository;
@@ -92,7 +94,20 @@ public class AuthService {
         Admin admin = adminRepository.findByEmailIgnoreCase(request.email().trim())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenziali non valide."));
 
-        if (!admin.getPasswordHash().equals(request.password())) {
+        String rawPassword = request.password();
+        String storedPassword = admin.getPasswordHash();
+        boolean validCredentials = false;
+
+        if (storedPassword != null && storedPassword.startsWith("$2")) {
+            validCredentials = PASSWORD_ENCODER.matches(rawPassword, storedPassword);
+        } else if (storedPassword != null && storedPassword.equals(rawPassword)) {
+            validCredentials = true;
+            // Seamless migration from legacy clear-text seed to BCrypt hash.
+            admin.setPasswordHash(PASSWORD_ENCODER.encode(rawPassword));
+            adminRepository.save(admin);
+        }
+
+        if (!validCredentials) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenziali non valide.");
         }
         return admin;

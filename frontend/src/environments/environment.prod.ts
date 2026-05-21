@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api-fittizia.example.com'
+  apiBaseUrl: 'https://web-site-eurcine.onrender.com'
 };

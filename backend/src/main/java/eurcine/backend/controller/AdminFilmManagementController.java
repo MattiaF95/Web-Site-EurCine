@@ -7,7 +7,6 @@ import eurcine.backend.dto.AdminFilmTitleOption;
 import eurcine.backend.service.AdminFilmManagementService;
 import java.util.List;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/admin/film")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class AdminFilmManagementController {
 
     private static final String SESSION_COOKIE_NAME = "eurcine_session";
