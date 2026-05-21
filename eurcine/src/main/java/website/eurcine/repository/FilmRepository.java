@@ -8,6 +8,8 @@ import website.eurcine.repository.projection.FilmView;
 
 public interface FilmRepository extends JpaRepository<Film, Long> {
 
+    List<Film> findByTitoloContainingIgnoreCaseOrderByTitoloAsc(String titolo);
+
     @Query("""
         select f.titolo as titolo,
                f.durataMin as durataMin,
