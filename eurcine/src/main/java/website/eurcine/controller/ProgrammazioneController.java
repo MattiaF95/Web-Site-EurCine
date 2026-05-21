@@ -9,7 +9,7 @@ import website.eurcine.model.Programmazione;
 import website.eurcine.service.ProgrammazioneService;
 
 @RestController
-@RequestMapping("/programmazione")
+@RequestMapping("/api/programmazione")
 @CrossOrigin(origins = "http://localhost:4200")
 public class ProgrammazioneController {
 

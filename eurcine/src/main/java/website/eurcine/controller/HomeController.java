@@ -18,7 +18,7 @@ public class HomeController {
         this.programmazioneService = programmazioneService;
     }
 
-    @GetMapping("/home")
+    @GetMapping("/api/home")
     public List<ProgrammazioneGiornalieraView> home() {
         return programmazioneService.getDailySchedule(LocalDate.now());
     }

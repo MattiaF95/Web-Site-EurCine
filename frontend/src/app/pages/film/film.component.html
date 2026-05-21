@@ -3,8 +3,38 @@
     <span class="page__kicker">Film</span>
     <h1 class="page__title">In sala ora</h1>
     <p class="page__text">
-      Catalogo film in evidenza, schede dettagliate e trailer: questa sezione e predisposta per una
-      vetrina completa di titoli correnti e prossime uscite.
+      Catalogo film completo con durata, lingua e generi.
     </p>
+
+    <div class="data-card">
+      <h2 class="data-card__title">Tutti i Film</h2>
+
+      @if (films$ | async; as films) {
+        <div class="wow-table-wrap">
+          <table class="wow-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Titolo</th>
+                <th>Durata (min)</th>
+                <th>Lingua</th>
+                <th>Generi</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (film of films; track film.id) {
+                <tr>
+                  <td>{{ film.id }}</td>
+                  <td>{{ film.titolo }}</td>
+                  <td>{{ film.durataMin }}</td>
+                  <td>{{ film.lingua?.nome ?? '-' }}</td>
+                  <td>{{ getGeneri(film) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
   </div>
 </section>

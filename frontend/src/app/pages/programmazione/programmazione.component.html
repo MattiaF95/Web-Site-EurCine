@@ -3,8 +3,40 @@
     <span class="page__kicker">Programmazione</span>
     <h1 class="page__title">Spettacoli della settimana</h1>
     <p class="page__text">
-      Qui integreremo calendario, orari, filtri per genere e anteprime. La base e pronta per
-      collegare dati reali e prenotazione online.
+      Tutti gli spettacoli caricati dal backend Spring Boot.
     </p>
+
+    <div class="data-card">
+      <h2 class="data-card__title">Elenco Programmazioni</h2>
+
+      @if (programmazioni$ | async; as programmazioni) {
+        <div class="wow-table-wrap">
+          <table class="wow-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Film</th>
+                <th>Sala</th>
+                <th>Inizio</th>
+                <th>Prezzo &lt;18</th>
+                <th>Prezzo &gt;=18</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of programmazioni; track item.id) {
+                <tr>
+                  <td>{{ item.id }}</td>
+                  <td>{{ item.film?.titolo ?? '-' }}</td>
+                  <td>{{ item.sala?.nome ?? '-' }}</td>
+                  <td>{{ item.startAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ item.prezzoBasePre18 | currency: 'EUR' }}</td>
+                  <td>{{ item.prezzoBasePost18 | currency: 'EUR' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
   </div>
 </section>

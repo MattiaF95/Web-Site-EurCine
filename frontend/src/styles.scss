@@ -76,3 +76,54 @@ a {
   color: var(--text-secondary);
   font-size: clamp(1rem, 2vw, 1.2rem);
 }
+
+.data-card {
+  margin-top: 1.6rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(180, 204, 255, 0.22);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(86, 178, 255, 0.16), transparent 36%),
+    radial-gradient(circle at 100% 100%, rgba(255, 182, 88, 0.16), transparent 32%),
+    rgba(4, 12, 28, 0.66);
+  backdrop-filter: blur(7px);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.32);
+}
+
+.data-card__title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+}
+
+.wow-table-wrap {
+  overflow: auto;
+  border-radius: 0.8rem;
+}
+
+.wow-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.wow-table thead th {
+  text-align: left;
+  padding: 0.7rem 0.75rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #d4e6ff;
+  background: rgba(22, 56, 104, 0.44);
+  border-bottom: 1px solid rgba(195, 220, 255, 0.2);
+}
+
+.wow-table tbody td {
+  padding: 0.72rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f2f7ff;
+  transition: background-color 0.2s ease;
+}
+
+.wow-table tbody tr:hover td {
+  background: rgba(107, 177, 255, 0.17);
+}

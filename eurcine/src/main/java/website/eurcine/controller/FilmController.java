@@ -9,7 +9,7 @@ import website.eurcine.model.Film;
 import website.eurcine.service.FilmService;
 
 @RestController
-@RequestMapping("/film")
+@RequestMapping("/api/film")
 @CrossOrigin(origins = "http://localhost:4200")
 public class FilmController {
 
