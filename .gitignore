@@ -113,3 +113,7 @@ frontend/Thumbs.db
 
 # --- Internal helper folders not meant for versioning ---
 eurcine/.github/java-upgrade/**
+backend/.github/java-upgrade/**
+
+# Root editor settings (local)
+.vscode/
