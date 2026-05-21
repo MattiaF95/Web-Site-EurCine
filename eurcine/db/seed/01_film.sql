@@ -31,6 +31,12 @@ INSERT INTO genere (nome)
 SELECT 'Horror' WHERE NOT EXISTS (SELECT 1 FROM genere WHERE nome = 'Horror');
 INSERT INTO genere (nome)
 SELECT 'Fantasy' WHERE NOT EXISTS (SELECT 1 FROM genere WHERE nome = 'Fantasy');
+INSERT INTO genere (nome)
+SELECT 'Azione' WHERE NOT EXISTS (SELECT 1 FROM genere WHERE nome = 'Azione');
+INSERT INTO genere (nome)
+SELECT 'Fantascienza' WHERE NOT EXISTS (SELECT 1 FROM genere WHERE nome = 'Fantascienza');
+INSERT INTO genere (nome)
+SELECT 'Avventura' WHERE NOT EXISTS (SELECT 1 FROM genere WHERE nome = 'Avventura');
 
 -- Film
 INSERT INTO film (titolo, durata_min, lingua_id)
@@ -98,6 +104,24 @@ SELECT 'Sentimental value', 135, l.id
 FROM lingua l
 WHERE l.nome = 'Italiano'
   AND NOT EXISTS (SELECT 1 FROM film f WHERE f.titolo = 'Sentimental value');
+
+INSERT INTO film (titolo, durata_min, lingua_id)
+SELECT 'Mortal Kombat II', 112, l.id
+FROM lingua l
+WHERE l.nome = 'Inglese'
+  AND NOT EXISTS (SELECT 1 FROM film f WHERE f.titolo = 'Mortal Kombat II');
+
+INSERT INTO film (titolo, durata_min, lingua_id)
+SELECT 'Super Mario Galaxy', 104, l.id
+FROM lingua l
+WHERE l.nome = 'Italiano'
+  AND NOT EXISTS (SELECT 1 FROM film f WHERE f.titolo = 'Super Mario Galaxy');
+
+INSERT INTO film (titolo, durata_min, lingua_id)
+SELECT 'Star Wars - The Mandalorian and Grogu', 133, l.id
+FROM lingua l
+WHERE l.nome = 'Inglese'
+  AND NOT EXISTS (SELECT 1 FROM film f WHERE f.titolo = 'Star Wars - The Mandalorian and Grogu');
 
 -- Relazioni film-genere
 -- Vita privata
@@ -182,4 +206,22 @@ WHERE f.titolo = 'Marty supreme' AND g.nome IN ('Commedia', 'Dramma')
 INSERT INTO film_genere (film_id, genere_id)
 SELECT f.id, g.id FROM film f, genere g
 WHERE f.titolo = 'Sentimental value' AND g.nome = 'Dramma'
+  AND NOT EXISTS (SELECT 1 FROM film_genere fg WHERE fg.film_id = f.id AND fg.genere_id = g.id);
+
+-- Mortal Kombat II
+INSERT INTO film_genere (film_id, genere_id)
+SELECT f.id, g.id FROM film f, genere g
+WHERE f.titolo = 'Mortal Kombat II' AND g.nome IN ('Azione', 'Fantasy')
+  AND NOT EXISTS (SELECT 1 FROM film_genere fg WHERE fg.film_id = f.id AND fg.genere_id = g.id);
+
+-- Super Mario Galaxy
+INSERT INTO film_genere (film_id, genere_id)
+SELECT f.id, g.id FROM film f, genere g
+WHERE f.titolo = 'Super Mario Galaxy' AND g.nome IN ('Animazione', 'Avventura', 'Famiglia')
+  AND NOT EXISTS (SELECT 1 FROM film_genere fg WHERE fg.film_id = f.id AND fg.genere_id = g.id);
+
+-- Star Wars - The Mandalorian and Grogu
+INSERT INTO film_genere (film_id, genere_id)
+SELECT f.id, g.id FROM film f, genere g
+WHERE f.titolo = 'Star Wars - The Mandalorian and Grogu' AND g.nome IN ('Fantascienza', 'Avventura', 'Azione')
   AND NOT EXISTS (SELECT 1 FROM film_genere fg WHERE fg.film_id = f.id AND fg.genere_id = g.id);
