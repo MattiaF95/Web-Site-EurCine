@@ -1,0 +1,121 @@
+.page-sala-cinema {
+  background-image: url('/assets/images/programmazione-bg.webp');
+}
+
+.sala-header {
+  text-align: center;
+  margin-bottom: 1.2rem;
+}
+
+.sala-header__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+}
+
+.sala-header__subtitle {
+  margin: 0.4rem 0 0;
+  color: #d7e6ff;
+}
+
+.screen {
+  margin: 1rem auto 1.2rem;
+  width: min(820px, 100%);
+  text-align: center;
+  padding: 0.65rem;
+  color: #13213d;
+  font-weight: 700;
+  background: linear-gradient(180deg, #f8fbff, #cfd8e8);
+  border-radius: 0.25rem;
+  letter-spacing: 0.08em;
+}
+
+.seat-map {
+  display: grid;
+  gap: 0.45rem;
+  max-width: 920px;
+  margin: 2.2rem auto 0;
+}
+
+.seat-row {
+  display: grid;
+  grid-template-columns: 2rem 1fr 2rem;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.seat-row__label {
+  text-align: center;
+  color: #d8e7ff;
+  font-weight: 700;
+}
+
+.seat-row__seats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.38rem;
+}
+
+.seat {
+  width: 2.1rem;
+  height: 2.35rem;
+  border-radius: 0.45rem;
+  border: 1px solid rgba(188, 210, 255, 0.55);
+  background: linear-gradient(180deg, #c0ceff 0%, #8fa6ea 100%);
+  color: #0f1830;
+  cursor: pointer;
+}
+
+.seat--occupied {
+  background: linear-gradient(180deg, #6f7895 0%, #4b546f 100%);
+  border-color: rgba(203, 216, 248, 0.2);
+  color: #e2e9fb;
+}
+
+.seat--disabled {
+  background: linear-gradient(180deg, #3c4557 0%, #2b3240 100%);
+  border-color: rgba(160, 173, 204, 0.15);
+  color: #8f99b3;
+}
+
+.seat--selected {
+  background: linear-gradient(180deg, #76f1ae 0%, #33c87c 100%);
+  border-color: rgba(206, 255, 229, 0.65);
+  color: #062312;
+  box-shadow: 0 0 0 2px rgba(118, 241, 174, 0.28);
+}
+
+.seat-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  color: #dce9ff;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 999px;
+  margin-right: 0.35rem;
+}
+
+.legend-dot--available {
+  background: #9fb1ea;
+}
+
+.legend-dot--occupied {
+  background: #4f5a7a;
+}
+
+.legend-dot--selected {
+  background: #4fd18d;
+}
+
+.seat-selection-info {
+  text-align: center;
+  margin-top: 1rem;
+  font-weight: 700;
+}

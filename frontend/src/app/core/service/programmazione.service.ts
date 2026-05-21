@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Programmazione } from '../model/programmazione.model';
 import { environment } from '../../../environments/environment';
+import { SeatMap } from '../model/seat-map.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProgrammazioneService {
@@ -11,5 +12,9 @@ export class ProgrammazioneService {
 
   getAll(): Observable<Programmazione[]> {
     return this.http.get<Programmazione[]>(this.apiUrl);
+  }
+
+  getSeatMap(programmazioneId: number): Observable<SeatMap> {
+    return this.http.get<SeatMap>(`${this.apiUrl}/${programmazioneId}/seat-map`);
   }
 }

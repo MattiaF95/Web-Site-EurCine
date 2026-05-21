@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 
 public interface ProgrammazioneView {
 
+    Long getProgrammazioneId();
+
     String getFilmTitolo();
 
     String getSalaNome();

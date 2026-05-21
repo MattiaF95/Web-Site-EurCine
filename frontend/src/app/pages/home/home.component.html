@@ -19,8 +19,9 @@
             [title]="card.title"
             [subtitle]="card.subtitle"
             [date]="card.date"
-            [times]="card.times"
+            [slots]="card.slots"
             [lineTwo]="card.lineTwo"
+            (slotSelected)="goToSeatMap($event)"
           />
         }
       </div>

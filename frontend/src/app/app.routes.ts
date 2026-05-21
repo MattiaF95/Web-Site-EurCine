@@ -20,6 +20,10 @@ export const routes: Routes = [
       import('./pages/programmazione/programmazione.component').then((m) => m.ProgrammazioneComponent)
   },
   {
+    path: 'programmazione/:programmazioneId/sala',
+    loadComponent: () => import('./pages/sala-cinema/sala-cinema.component').then((m) => m.SalaCinemaComponent)
+  },
+  {
     path: 'film',
     loadComponent: () => import('./pages/film/film.component').then((m) => m.FilmComponent)
   },

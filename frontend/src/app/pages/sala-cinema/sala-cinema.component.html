@@ -1,0 +1,51 @@
+<section class="page page-sala-cinema">
+  <div class="page__content page__content--wide">
+    @if (seatMap$ | async; as seatMap) {
+      <div class="sala-header">
+        <h1 class="sala-header__title">{{ seatMap.salaNome }} - {{ seatMap.startAt | date: 'dd/MM HH:mm' }}</h1>
+        <p class="sala-header__subtitle">{{ seatMap.filmTitolo }}</p>
+      </div>
+
+      <div class="screen">SCHERMO</div>
+
+      <div class="seat-map">
+        @for (row of seatMap.righe; track row.fila) {
+          <div class="seat-row">
+            <div class="seat-row__label">{{ row.fila }}</div>
+            <div class="seat-row__seats">
+              @for (seat of row.posti; track seat.postoId) {
+                <button
+                  type="button"
+                  class="seat"
+                  [class.seat--occupied]="seat.stato === 'OCCUPIED'"
+                  [class.seat--disabled]="seat.stato === 'DISABLED'"
+                  [class.seat--selected]="isSelected(seat.postoId)"
+                  [disabled]="seat.stato !== 'AVAILABLE'"
+                  [attr.aria-label]="'Fila ' + row.fila + ' posto ' + seat.numero"
+                  (click)="toggleSeat(seat)"
+                ></button>
+              }
+            </div>
+            <div class="seat-row__label">{{ row.fila }}</div>
+          </div>
+        }
+      </div>
+
+      <div class="seat-legend">
+        <span><i class="legend-dot legend-dot--available"></i>Disponibile</span>
+        <span><i class="legend-dot legend-dot--occupied"></i>Occupato</span>
+        <span><i class="legend-dot legend-dot--selected"></i>Selezionato</span>
+      </div>
+
+      <div class="seat-selection-info">Posti selezionati: {{ selectedCount() }}</div>
+      <div class="seat-selection-info seat-selection-info--list">
+        Elenco posti:
+        @if (getSelectedSeatLabels(seatMap.righe).length > 0) {
+          {{ getSelectedSeatLabels(seatMap.righe).join(', ') }}
+        } @else {
+          nessuno
+        }
+      </div>
+    }
+  </div>
+</section>

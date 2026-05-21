@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+
+export interface ScheduleSlot {
+  programmazioneId: number;
+  label: string;
+}
 
 @Component({
   selector: 'app-showcase-card',
@@ -12,6 +17,13 @@ export class ShowcaseCardComponent {
   readonly date = input<string>('');
   readonly times = input<string>('');
   readonly lineTwo = input<string>('');
+  readonly slots = input<ScheduleSlot[]>([]);
   readonly centered = input<boolean>(false);
   readonly large = input<boolean>(false);
+
+  readonly slotSelected = output<number>();
+
+  onSlotClick(programmazioneId: number): void {
+    this.slotSelected.emit(programmazioneId);
+  }
 }

@@ -41,3 +41,28 @@
 .showcase-card__meta--times {
   white-space: pre-line;
 }
+
+.showcase-card__slots {
+  margin-top: 0.72rem;
+}
+
+.showcase-card__slot-grid {
+  margin-top: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.showcase-card__slot-btn {
+  border: 1px solid rgba(165, 198, 255, 0.35);
+  background: rgba(31, 74, 145, 0.42);
+  color: #f3f8ff;
+  border-radius: 0.55rem;
+  padding: 0.35rem 0.45rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.showcase-card__slot-btn:hover {
+  background: rgba(50, 110, 205, 0.55);
+}

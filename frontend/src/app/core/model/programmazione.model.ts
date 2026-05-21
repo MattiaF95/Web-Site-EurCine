@@ -1,4 +1,5 @@
 export interface Programmazione {
+  programmazioneId: number;
   filmTitolo: string;
   salaNome: string;
   startAt: string;

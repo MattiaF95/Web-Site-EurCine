@@ -9,7 +9,18 @@
     <p class="showcase-card__meta">{{ date() }}</p>
   }
 
-  @if (times()) {
+  @if (slots().length > 0) {
+    <div class="showcase-card__slots">
+      <p class="showcase-card__meta"><strong>Inizio:</strong></p>
+      <div class="showcase-card__slot-grid">
+        @for (slot of slots(); track slot.programmazioneId) {
+          <button type="button" class="showcase-card__slot-btn" (click)="onSlotClick(slot.programmazioneId)">
+            {{ slot.label }}
+          </button>
+        }
+      </div>
+    </div>
+  } @else if (times()) {
     <p class="showcase-card__meta showcase-card__meta--times"><strong>Inizio:</strong> {{ times() }}</p>
   }
 

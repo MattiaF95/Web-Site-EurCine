@@ -44,7 +44,8 @@ public interface ProgrammazioneRepository extends JpaRepository<Programmazione, 
     );
 
     @Query("""
-        select f.titolo as filmTitolo,
+        select p.id as programmazioneId,
+               f.titolo as filmTitolo,
                s.nome as salaNome,
                p.startAt as startAt,
                p.prezzoBasePre18 as prezzoBasePre18,
