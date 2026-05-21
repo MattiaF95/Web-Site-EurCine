@@ -119,3 +119,34 @@
   margin-top: 1rem;
   font-weight: 700;
 }
+
+.order-actions {
+  margin-top: 1.2rem;
+  display: grid;
+  gap: 0.7rem;
+  justify-content: center;
+}
+
+.customer-input {
+  width: min(340px, 80vw);
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(180, 204, 255, 0.35);
+  background: rgba(8, 19, 42, 0.74);
+  color: #e8f1ff;
+}
+
+.order-btn {
+  padding: 0.62rem 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(192, 216, 255, 0.45);
+  background: linear-gradient(180deg, #4062d5, #2f49a8);
+  color: #f4f8ff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.order-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

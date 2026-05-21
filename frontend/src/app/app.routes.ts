@@ -24,6 +24,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/sala-cinema/sala-cinema.component').then((m) => m.SalaCinemaComponent)
   },
   {
+    path: 'ticket-show/:ordineId',
+    loadComponent: () => import('./pages/ticket-show/ticket-show.component').then((m) => m.TicketShowComponent)
+  },
+  {
     path: 'film',
     loadComponent: () => import('./pages/film/film.component').then((m) => m.FilmComponent)
   },

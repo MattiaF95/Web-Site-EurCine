@@ -1,26 +1,33 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { map, switchMap } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { map, shareReplay, switchMap, take } from 'rxjs';
 import { SeatItem } from '../../core/model/seat-map.model';
+import { OrdineService } from '../../core/service/ordine.service';
 import { ProgrammazioneService } from '../../core/service/programmazione.service';
 
 @Component({
   selector: 'app-sala-cinema',
-  imports: [AsyncPipe, DatePipe],
+  imports: [AsyncPipe, DatePipe, FormsModule],
   templateUrl: './sala-cinema.component.html',
   styleUrl: './sala-cinema.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SalaCinemaComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly programmazioneService = inject(ProgrammazioneService);
+  private readonly ordineService = inject(OrdineService);
 
   readonly selectedSeatIds = signal<Set<number>>(new Set());
+  readonly showCustomerInput = signal(false);
+  readonly customerName = signal('');
 
   readonly seatMap$ = this.route.paramMap.pipe(
     map((params) => Number(params.get('programmazioneId'))),
-    switchMap((programmazioneId) => this.programmazioneService.getSeatMap(programmazioneId))
+    switchMap((programmazioneId) => this.programmazioneService.getSeatMap(programmazioneId)),
+    shareReplay({ bufferSize: 1, refCount: true })
   );
 
   readonly selectedCount = computed(() => this.selectedSeatIds().size);
@@ -57,5 +64,31 @@ export class SalaCinemaComponent {
     }
 
     return labels;
+  }
+
+  onPrenotaClick(): void {
+    if (this.selectedCount() === 0) {
+      return;
+    }
+
+    this.showCustomerInput.set(true);
+  }
+
+  onConfermaOrdine(): void {
+    const nomeCliente = this.customerName().trim();
+    if (!nomeCliente) {
+      return;
+    }
+
+    this.seatMap$.pipe(take(1)).subscribe((seatMap) => {
+      this.ordineService.createOrdine({
+        nomeCliente,
+        programmazioneId: seatMap.programmazioneId,
+        postoIds: Array.from(this.selectedSeatIds())
+      }).subscribe((ordine) => {
+        this.selectedSeatIds.set(new Set());
+        void this.router.navigate(['/ticket-show', ordine.ordineId]);
+      });
+    });
   }
 }

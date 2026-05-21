@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import website.eurcine.repository.projection.ProgrammazioneGiornalieraView;
+import website.eurcine.dto.HomeProgrammazioneRecord;
 import website.eurcine.service.ProgrammazioneService;
 
 @RestController
@@ -19,7 +19,7 @@ public class HomeController {
     }
 
     @GetMapping("/api/home")
-    public List<ProgrammazioneGiornalieraView> home() {
+    public List<HomeProgrammazioneRecord> home() {
         return programmazioneService.getDailySchedule(LocalDate.now());
     }
 }

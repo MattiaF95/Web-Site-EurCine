@@ -46,6 +46,25 @@
           nessuno
         }
       </div>
+
+      <div class="order-actions">
+        @if (!showCustomerInput()) {
+          <button type="button" class="order-btn" [disabled]="selectedCount() === 0" (click)="onPrenotaClick()">
+            PRENOTA BIGLIETTI
+          </button>
+        } @else {
+          <input
+            type="text"
+            class="customer-input"
+            placeholder="Nome cliente"
+            [ngModel]="customerName()"
+            (ngModelChange)="customerName.set($event)"
+          />
+          <button type="button" class="order-btn" [disabled]="!customerName().trim()" (click)="onConfermaOrdine()">
+            CONFERMA ORDINE
+          </button>
+        }
+      </div>
     }
   </div>
 </section>

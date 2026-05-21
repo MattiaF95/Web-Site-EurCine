@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import website.eurcine.repository.projection.SalaView;
+import website.eurcine.dto.SalaRecord;
 import website.eurcine.service.SaleService;
 
 @RestController
@@ -20,7 +20,7 @@ public class SaleController {
     }
 
     @GetMapping
-    public List<SalaView> getAll() {
+    public List<SalaRecord> getAll() {
         return saleService.getAll();
     }
 }

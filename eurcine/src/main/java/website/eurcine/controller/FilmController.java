@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import website.eurcine.repository.projection.FilmView;
+import website.eurcine.dto.FilmRecord;
 import website.eurcine.service.FilmService;
 
 @RestController
@@ -20,7 +20,7 @@ public class FilmController {
     }
 
     @GetMapping
-    public List<FilmView> getAll() {
+    public List<FilmRecord> getAll() {
         return filmService.getAll();
     }
 }

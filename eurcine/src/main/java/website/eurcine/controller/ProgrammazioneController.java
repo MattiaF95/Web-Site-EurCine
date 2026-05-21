@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import website.eurcine.dto.ProgrammazioneRecord;
 import website.eurcine.dto.SeatMapDto;
-import website.eurcine.repository.projection.ProgrammazioneView;
 import website.eurcine.service.ProgrammazioneService;
 import website.eurcine.service.SeatMapService;
 
@@ -28,7 +28,7 @@ public class ProgrammazioneController {
     }
 
     @GetMapping
-    public List<ProgrammazioneView> getAll() {
+    public List<ProgrammazioneRecord> getAll() {
         return programmazioneService.getAll();
     }
 

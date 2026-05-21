@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import website.eurcine.dto.HomeProgrammazioneRecord;
+import website.eurcine.dto.ProgrammazioneRecord;
 import website.eurcine.repository.ProgrammazioneRepository;
-import website.eurcine.repository.projection.ProgrammazioneGiornalieraView;
-import website.eurcine.repository.projection.ProgrammazioneView;
 
 @Service
 public class ProgrammazioneService {
@@ -17,13 +17,29 @@ public class ProgrammazioneService {
         this.programmazioneRepository = programmazioneRepository;
     }
 
-    public List<ProgrammazioneView> getAll() {
-        return programmazioneRepository.findAllProjected();
+    public List<ProgrammazioneRecord> getAll() {
+        return programmazioneRepository.findAllProjected().stream()
+            .map(view -> new ProgrammazioneRecord(
+                view.getProgrammazioneId(),
+                view.getFilmTitolo(),
+                view.getSalaNome(),
+                view.getStartAt(),
+                view.getPrezzoBasePre18(),
+                view.getPrezzoBasePost18()
+            ))
+            .toList();
     }
 
-    public List<ProgrammazioneGiornalieraView> getDailySchedule(LocalDate day) {
+    public List<HomeProgrammazioneRecord> getDailySchedule(LocalDate day) {
         LocalDateTime dayStart = day.atStartOfDay();
         LocalDateTime dayEnd = day.plusDays(1).atStartOfDay();
-        return programmazioneRepository.findDailyScheduleWithAvailability(dayStart, dayEnd);
+        return programmazioneRepository.findDailyScheduleWithAvailability(dayStart, dayEnd).stream()
+            .map(view -> new HomeProgrammazioneRecord(
+                view.getFilmTitolo(),
+                view.getStartAt(),
+                view.getSalaNome(),
+                view.getPostiDisponibili()
+            ))
+            .toList();
     }
 }

@@ -1,0 +1,32 @@
+.page-ticket-show {
+  background-image: url('/assets/images/film-bg.jpg');
+}
+
+.order-card {
+  margin: 1rem auto;
+  max-width: 980px;
+  padding: 1rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(187, 211, 255, 0.28);
+  background: rgba(8, 20, 44, 0.72);
+}
+
+.order-card h2 {
+  margin-top: 0;
+}
+
+.order-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.order-btn {
+  padding: 0.7rem 1.1rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(192, 216, 255, 0.45);
+  background: linear-gradient(180deg, #4062d5, #2f49a8);
+  color: #f4f8ff;
+  font-weight: 700;
+  cursor: pointer;
+}
