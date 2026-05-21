@@ -3,6 +3,7 @@ package website.eurcine.controller;
 import java.util.List;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import website.eurcine.dto.FilmRecord;
@@ -22,5 +23,10 @@ public class FilmController {
     @GetMapping
     public List<FilmRecord> getAll() {
         return filmService.getAll();
+    }
+
+    @GetMapping("/{titolo}")
+    public FilmRecord getOne(@PathVariable String titolo) {
+        return filmService.getOne(titolo);
     }
 }

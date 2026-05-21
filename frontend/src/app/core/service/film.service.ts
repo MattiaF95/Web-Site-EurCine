@@ -12,4 +12,8 @@ export class FilmService {
   getAll(): Observable<Film[]> {
     return this.http.get<Film[]>(this.apiUrl);
   }
+
+  getOne(titolo: string): Observable<Film> {
+    return this.http.get<Film>(`${this.apiUrl}/${encodeURIComponent(titolo)}`);
+  }
 }

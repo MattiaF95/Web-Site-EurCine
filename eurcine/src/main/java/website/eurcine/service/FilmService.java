@@ -24,4 +24,15 @@ public class FilmService {
             ))
             .toList();
     }
+
+    public FilmRecord getOne(String titolo) {
+        return filmRepository.findProjectedByTitoloIgnoreCase(titolo)
+            .map(view -> new FilmRecord(
+                view.getTitolo(),
+                view.getDurataMin(),
+                view.getLinguaNome(),
+                view.getGeneriNomi()
+            ))
+            .orElseThrow(() -> new IllegalArgumentException("Film non trovato: " + titolo));
+    }
 }

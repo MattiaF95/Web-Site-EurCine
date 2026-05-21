@@ -59,3 +59,61 @@
 .site-main {
   min-height: 100dvh;
 }
+
+.header-right {
+  display: grid;
+  justify-items: end;
+  gap: 0.45rem;
+}
+
+.film-search {
+  position: relative;
+}
+
+.film-search__icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(169, 198, 255, 0.4);
+  background: rgba(25, 58, 118, 0.55);
+  color: #f3f8ff;
+  cursor: pointer;
+}
+
+.film-search__panel {
+  position: absolute;
+  right: 0;
+  top: 2.3rem;
+  width: 220px;
+}
+
+.film-search--in-nav {
+  margin-right: 0.2rem;
+}
+
+.film-search__panel--left {
+  right: calc(100% + 0.5rem);
+  top: -0.05rem;
+  width: 280px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.45rem;
+}
+
+.film-search__input {
+  width: 100%;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(174, 202, 255, 0.4);
+  background: rgba(11, 25, 52, 0.9);
+  color: #eef5ff;
+  padding: 0.45rem 0.6rem;
+}
+
+.film-search__submit {
+  border-radius: 0.55rem;
+  border: 1px solid rgba(174, 202, 255, 0.4);
+  background: rgba(30, 69, 136, 0.8);
+  color: #eef5ff;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+}

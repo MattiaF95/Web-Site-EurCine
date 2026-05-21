@@ -7,10 +7,15 @@
       </p>
     </div>
 
-    <div class="data-card data-card--centered">
-      <h2 class="data-card__title">Tutti i Film</h2>
+    @if (hasSelectedFilm() && selectedFilm(); as film) {
+      <div class="film-actions">
+        <button type="button" class="film-all-btn" (click)="viewAll()">Visualizza tutti i film</button>
+      </div>
+      <app-film-view [film]="film" />
+    } @else {
+      <div class="data-card data-card--centered">
+        <h2 class="data-card__title">Tutti i Film</h2>
 
-      @if (films$ | async; as films) {
         <div class="wow-table-wrap">
           <table class="wow-table">
             <thead>
@@ -22,8 +27,8 @@
               </tr>
             </thead>
             <tbody>
-              @for (film of films; track film.titolo) {
-                <tr>
+              @for (film of films(); track film.titolo) {
+                <tr class="film-row" (click)="openFilm(film)">
                   <td>{{ film.titolo }}</td>
                   <td>{{ film.durataMin }}</td>
                   <td>{{ film.linguaNome }}</td>
@@ -33,7 +38,7 @@
             </tbody>
           </table>
         </div>
-      }
-    </div>
+      </div>
+    }
   </div>
 </section>
