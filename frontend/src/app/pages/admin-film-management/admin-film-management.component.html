@@ -1,0 +1,25 @@
+<section class="page page-admin">
+  <div class="page__content page__content--wide">
+    <div class="page__hero">
+      <h1 class="page__title">Gestisci Film</h1>
+      <p class="page__text">Seleziona un'operazione amministrativa.</p>
+    </div>
+
+    <div class="cards-grid cards-grid--films admin-cards-grid">
+      <a routerLink="/admin/film/aggiungi" class="showcase-card admin-action-card admin-action-card--add">
+        <h2 class="showcase-card__title">Aggiungi film</h2>
+        <p class="showcase-card__meta">Inserisci un nuovo titolo in catalogo.</p>
+      </a>
+
+      <a routerLink="/admin/film/modifica" class="showcase-card admin-action-card admin-action-card--edit">
+        <h2 class="showcase-card__title">Modifica film</h2>
+        <p class="showcase-card__meta">Aggiorna i dati di un film esistente.</p>
+      </a>
+
+      <a routerLink="/admin/film/elimina" class="showcase-card admin-action-card admin-action-card--delete">
+        <h2 class="showcase-card__title">Elimina film</h2>
+        <p class="showcase-card__meta">Rimuovi un film dal catalogo.</p>
+      </a>
+    </div>
+  </div>
+</section>

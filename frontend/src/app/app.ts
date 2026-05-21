@@ -73,13 +73,13 @@ export class App {
   goToManageFilm(): void {
     this.mobileNavOpen.set(false);
     this.profileOpen.set(false);
-    void this.router.navigate(['/film']);
+    void this.router.navigate(['/admin/film']);
   }
 
   goToManageProgrammazione(): void {
     this.mobileNavOpen.set(false);
     this.profileOpen.set(false);
-    void this.router.navigate(['/programmazione']);
+    void this.router.navigate(['/admin/programmazione']);
   }
 
   closeMobileNav(): void {

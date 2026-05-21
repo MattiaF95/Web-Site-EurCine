@@ -1,0 +1,82 @@
+.page-admin {
+  background-image: url('/assets/images/logo.jpg');
+}
+
+.admin-cards-grid {
+  grid-template-columns: repeat(3, minmax(220px, 300px));
+  justify-content: center;
+  align-items: stretch;
+  gap: 1.15rem;
+  max-width: 1060px;
+  margin: 1.9rem auto 0;
+}
+
+.admin-action-card {
+  min-height: 190px;
+  padding: 1.15rem 1.05rem;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(186, 214, 255, 0.38);
+  background:
+    radial-gradient(circle at 6% 4%, rgba(107, 188, 255, 0.24), transparent 48%),
+    radial-gradient(circle at 95% 100%, rgba(255, 188, 102, 0.2), transparent 42%),
+    rgba(8, 23, 46, 0.76);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.38);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.admin-action-card .showcase-card__title {
+  font-size: clamp(1.26rem, 2.2vw, 1.6rem);
+  margin-bottom: 0.55rem;
+}
+
+.admin-action-card .showcase-card__meta {
+  color: #d7e9ff;
+  line-height: 1.45;
+}
+
+.admin-action-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(218, 234, 255, 0.82);
+  box-shadow: 0 26px 40px rgba(0, 0, 0, 0.44);
+}
+
+.admin-action-card--add {
+  background:
+    radial-gradient(circle at 6% 4%, rgba(126, 229, 168, 0.28), transparent 48%),
+    radial-gradient(circle at 95% 100%, rgba(151, 236, 190, 0.2), transparent 42%),
+    rgba(10, 44, 33, 0.76);
+}
+
+.admin-action-card--edit {
+  background:
+    radial-gradient(circle at 6% 4%, rgba(255, 202, 129, 0.28), transparent 48%),
+    radial-gradient(circle at 95% 100%, rgba(255, 179, 112, 0.2), transparent 42%),
+    rgba(56, 35, 12, 0.76);
+}
+
+.admin-action-card--delete {
+  background:
+    radial-gradient(circle at 6% 4%, rgba(255, 154, 154, 0.28), transparent 48%),
+    radial-gradient(circle at 95% 100%, rgba(255, 125, 125, 0.2), transparent 42%),
+    rgba(56, 14, 18, 0.76);
+}
+
+@media (max-width: 1100px) {
+  .admin-cards-grid {
+    grid-template-columns: repeat(2, minmax(220px, 300px));
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-cards-grid {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+  }
+
+  .admin-action-card {
+    min-height: 172px;
+  }
+}

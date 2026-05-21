@@ -1,0 +1,40 @@
+<section class="page page-admin">
+  <div class="page__content page__content--wide">
+    <div class="page__hero">
+      <h1 class="page__title">Elimina Film</h1>
+    </div>
+
+    <div class="data-card admin-form-card admin-form-card--delete">
+      @if (loading()) {
+        <p class="page__text">Caricamento titoli...</p>
+      } @else {
+        <label>
+          Seleziona film
+          <select [ngModel]="selectedFilmId()" (ngModelChange)="selectedFilmId.set($event)">
+            <option [ngValue]="null">Scegli un titolo</option>
+            @for (item of titles(); track item.id) {
+              <option [ngValue]="item.id">{{ item.titolo }}</option>
+            }
+          </select>
+        </label>
+
+        @if (selectedFilmId()) {
+          <div class="admin-actions-row">
+            <button type="button" class="admin-btn" (click)="cancella()" [disabled]="deleting()">
+              {{ deleting() ? 'Eliminazione...' : 'Cancella' }}
+            </button>
+            <button type="button" class="admin-btn admin-btn--secondary" (click)="annulla()">Annulla</button>
+          </div>
+        }
+
+        @if (error()) {
+          <p class="admin-error">{{ error() }}</p>
+        }
+
+        @if (success()) {
+          <p class="admin-success">{{ success() }}</p>
+        }
+      }
+    </div>
+  </div>
+</section>

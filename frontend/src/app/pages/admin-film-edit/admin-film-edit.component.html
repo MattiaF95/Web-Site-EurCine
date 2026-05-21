@@ -1,0 +1,87 @@
+<section class="page page-admin" (click)="closeGenreMenu()">
+  <div class="page__content page__content--wide">
+    <div class="page__hero">
+      <h1 class="page__title">Modifica Film</h1>
+    </div>
+
+    <div class="data-card admin-form-card admin-form-card--edit" (click)="$event.stopPropagation()">
+      @if (loading()) {
+        <p class="page__text">Caricamento dati...</p>
+      } @else {
+        <label>
+          Seleziona film
+          <select [ngModel]="selectedFilmId()" (ngModelChange)="onFilmSelect($event)">
+            <option [ngValue]="null">Scegli un titolo</option>
+            @for (item of titles(); track item.id) {
+              <option [ngValue]="item.id">{{ item.titolo }}</option>
+            }
+          </select>
+        </label>
+
+        @if (loadingFilm()) {
+          <p class="page__text">Caricamento dettagli film...</p>
+        }
+
+        @if (selectedFilm(); as film) {
+          <div class="admin-form-grid">
+            <label>
+              Titolo
+              <input type="text" [ngModel]="film.titolo" (ngModelChange)="updateField('titolo', $event)" />
+            </label>
+
+            <label>
+              Durata (min)
+              <input type="number" min="1" [ngModel]="film.durataMin" (ngModelChange)="updateField('durataMin', $event)" />
+            </label>
+
+            <label>
+              Lingua
+              <select [ngModel]="film.linguaId" (ngModelChange)="updateField('linguaId', $event)">
+                @for (lingua of lingue(); track lingua.id) {
+                  <option [ngValue]="lingua.id">{{ lingua.nome }}</option>
+                }
+              </select>
+            </label>
+          </div>
+
+          <div class="admin-multi-select">
+            <p>Generi</p>
+            <button type="button" class="admin-multi-select__trigger" (click)="toggleGenreMenu()">
+              {{ selectedGenereLabel() }}
+            </button>
+
+            @if (genreMenuOpen()) {
+              <div class="admin-multi-select__menu">
+                @for (genere of generi(); track genere.id) {
+                  <button
+                    type="button"
+                    class="admin-multi-select__item"
+                    (click)="onGenreItemClick($event, genere.id)"
+                  >
+                    <span class="admin-multi-select__check">{{ isGenereSelected(genere.id) ? '✓' : '' }}</span>
+                    <span>{{ genere.nome }}</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="admin-actions-row">
+            <button type="button" class="admin-btn" (click)="salva()" [disabled]="saving()">
+              {{ saving() ? 'Salvataggio...' : 'Salva' }}
+            </button>
+            <button type="button" class="admin-btn admin-btn--secondary" (click)="annulla()">Annulla</button>
+          </div>
+        }
+
+        @if (error()) {
+          <p class="admin-error">{{ error() }}</p>
+        }
+
+        @if (success()) {
+          <p class="admin-success">{{ success() }}</p>
+        }
+      }
+    </div>
+  </div>
+</section>

@@ -9,6 +9,8 @@ import eurcine.backend.repository.projection.FilmView;
 
 public interface FilmRepository extends JpaRepository<Film, Long> {
 
+    Optional<Film> findByTitoloIgnoreCase(String titolo);
+
     List<Film> findByTitoloContainingIgnoreCaseOrderByTitoloAsc(String titolo);
 
     @Query("""
@@ -36,4 +38,6 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
         group by f.titolo, f.durataMin, l.nome
         """)
     Optional<FilmView> findProjectedByTitoloIgnoreCase(String titolo);
+
+    List<Film> findAllByOrderByTitoloAsc();
 }

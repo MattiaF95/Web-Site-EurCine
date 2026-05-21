@@ -72,6 +72,11 @@ export class AuthStateService {
     this.showWelcomeSignal.set(false);
   }
 
+  setFromMe(me: AuthMeResponse): void {
+    this.sessionSignal.set(this.toSession(me));
+    this.showWelcomeSignal.set(false);
+  }
+
   private toSession(me: AuthMeResponse): AuthSession {
     return {
       adminId: me.adminId,
