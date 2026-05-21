@@ -38,17 +38,15 @@ export class ProgrammazioneComponent {
       .slice(0, 16)
       .map(([filmTitle, list]) => {
         const first = list[0];
-        const sale = Array.from(new Set(list.map((p) => p.salaNome))).join(' - ');
-        const times = list
-          .map((p) => this.formatTime(p.startAt))
-          .filter((v, i, arr) => arr.indexOf(v) === i)
-          .join(' | ');
+        const timeEntries = list
+          .map((p) => `${this.formatTime(p.startAt)} (${p.salaNome})`)
+          .filter((v, i, arr) => arr.indexOf(v) === i);
 
         return {
           title: filmTitle,
-          subtitle: sale,
+          subtitle: '',
           date: this.formatDate(first.startAt),
-          times,
+          times: this.formatTimes(timeEntries),
           lineTwo: `Prezzi: ${first.prezzoBasePre18}€ / ${first.prezzoBasePost18}€`
         };
       });
@@ -60,5 +58,15 @@ export class ProgrammazioneComponent {
 
   private formatTime(isoDate: string): string {
     return new Date(isoDate).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  private formatTimes(entries: string[]): string {
+    const lines: string[] = [];
+
+    for (let i = 0; i < entries.length; i += 2) {
+      lines.push(entries.slice(i, i + 2).join(' | '));
+    }
+
+    return lines.join('\n');
   }
 }
