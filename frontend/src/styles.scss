@@ -80,6 +80,33 @@ a {
   margin-bottom: 1.2rem;
 }
 
+.page__day-title {
+  margin: 0;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  color: #d7e6ff;
+  text-transform: capitalize;
+}
+
+.calendar-picker {
+  max-width: 260px;
+  margin: 0.2rem auto 1rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.calendar-picker__label {
+  font-size: 0.85rem;
+  color: #c9dcff;
+}
+
+.calendar-picker__select {
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(174, 202, 255, 0.4);
+  background: rgba(11, 25, 52, 0.8);
+  color: #eef5ff;
+}
+
 .page__notice {
   margin: 0.4rem 0 1.1rem;
   max-width: 900px;

@@ -3,8 +3,23 @@
     <div class="page__hero">
       <h1 class="page__title">Spettacoli della settimana</h1>
       <p class="page__text">
-        Selezione film, senza ripetizioni per ogni orario.
+        Selezione film per il giorno scelto.
       </p>
+      <h2 class="page__day-title">{{ currentDateLabel() }}</h2>
+    </div>
+
+    <div class="calendar-picker">
+      <label for="day-select" class="calendar-picker__label">Giorno</label>
+      <select
+        id="day-select"
+        class="calendar-picker__select"
+        [ngModel]="selectedDate()"
+        (ngModelChange)="onDateChange($event)"
+      >
+        @for (opt of dayOptions; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
     </div>
 
     <div class="page__notice">
@@ -12,19 +27,16 @@
       l'orario indicato.
     </div>
 
-    @if (cards$ | async; as cards) {
-      <div class="cards-grid cards-grid--films">
-        @for (card of cards; track card.title) {
-          <app-showcase-card
-            [title]="card.title"
-            [subtitle]="card.subtitle"
-            [date]="card.date"
-            [slots]="card.slots"
-            [lineTwo]="card.lineTwo"
-            (slotSelected)="goToSeatMap($event)"
-          />
-        }
-      </div>
-    }
+    <div class="cards-grid cards-grid--films">
+      @for (card of cards(); track card.title) {
+        <app-showcase-card
+          [title]="card.title"
+          [subtitle]="card.subtitle"
+          [slots]="card.slots"
+          [lineTwo]="card.lineTwo"
+          (slotSelected)="goToSeatMap($event)"
+        />
+      }
+    </div>
   </div>
 </section>

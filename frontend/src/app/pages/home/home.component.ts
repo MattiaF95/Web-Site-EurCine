@@ -1,7 +1,6 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { map } from 'rxjs';
 import { ScheduleSlot, ShowcaseCardComponent } from '../../components/showcase-card/showcase-card.component';
 import { Programmazione } from '../../core/model/programmazione.model';
 import { ProgrammazioneService } from '../../core/service/programmazione.service';
@@ -9,14 +8,13 @@ import { ProgrammazioneService } from '../../core/service/programmazione.service
 interface FilmCard {
   title: string;
   subtitle: string;
-  date: string;
   slots: ScheduleSlot[];
   lineTwo: string;
 }
 
 @Component({
   selector: 'app-home',
-  imports: [AsyncPipe, ShowcaseCardComponent],
+  imports: [ShowcaseCardComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -25,7 +23,15 @@ export class HomeComponent {
   private readonly programmazioneService = inject(ProgrammazioneService);
   private readonly router = inject(Router);
 
-  readonly cards$ = this.programmazioneService.getAll().pipe(map((items) => this.toFilmCards(items)));
+  private readonly defaultDate = '2026-06-01';
+  readonly displayDate = this.formatLongDate(this.defaultDate);
+
+  private readonly allItems = toSignal(this.programmazioneService.getAll(), { initialValue: [] as Programmazione[] });
+
+  readonly cards = computed(() => {
+    const dayItems = this.allItems().filter((item) => this.toDateKey(item.startAt) === this.defaultDate);
+    return this.toFilmCards(dayItems);
+  });
 
   goToSeatMap(programmazioneId: number): void {
     void this.router.navigate(['/programmazione', programmazioneId, 'sala']);
@@ -55,18 +61,26 @@ export class HomeComponent {
         return {
           title: filmTitle,
           subtitle: '',
-          date: this.formatDate(first.startAt),
           slots,
           lineTwo: `Prezzi: ${first.prezzoBasePre18}€ / ${first.prezzoBasePost18}€`
         };
       });
   }
 
-  private formatDate(isoDate: string): string {
-    return new Date(isoDate).toLocaleDateString('it-IT');
+  private toDateKey(isoDate: string): string {
+    return new Date(isoDate).toISOString().slice(0, 10);
   }
 
   private formatTime(isoDate: string): string {
     return new Date(isoDate).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  private formatLongDate(dateKey: string): string {
+    return new Date(`${dateKey}T12:00:00`).toLocaleDateString('it-IT', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
   }
 }

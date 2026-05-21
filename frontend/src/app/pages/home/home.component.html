@@ -5,6 +5,7 @@
       <p class="page__text">
         Programmazione completa in tempo reale con sale, orari e prezzi.
       </p>
+      <h2 class="page__day-title">{{ displayDate }}</h2>
     </div>
 
     <div class="page__notice">
@@ -12,19 +13,16 @@
       l'orario indicato.
     </div>
 
-    @if (cards$ | async; as cards) {
-      <div class="cards-grid cards-grid--films">
-        @for (card of cards; track card.title) {
-          <app-showcase-card
-            [title]="card.title"
-            [subtitle]="card.subtitle"
-            [date]="card.date"
-            [slots]="card.slots"
-            [lineTwo]="card.lineTwo"
-            (slotSelected)="goToSeatMap($event)"
-          />
-        }
-      </div>
-    }
+    <div class="cards-grid cards-grid--films">
+      @for (card of cards(); track card.title) {
+        <app-showcase-card
+          [title]="card.title"
+          [subtitle]="card.subtitle"
+          [slots]="card.slots"
+          [lineTwo]="card.lineTwo"
+          (slotSelected)="goToSeatMap($event)"
+        />
+      }
+    </div>
   </div>
 </section>
