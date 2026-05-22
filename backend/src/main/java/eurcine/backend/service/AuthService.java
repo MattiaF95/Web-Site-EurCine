@@ -7,13 +7,7 @@ import eurcine.backend.dto.AuthMeResponse;
 import eurcine.backend.dto.LoginRequest;
 import eurcine.backend.dto.LoginResponse;
 import eurcine.backend.model.Admin;
-import eurcine.backend.model.AdminSession;
 import eurcine.backend.repository.AdminRepository;
-import eurcine.backend.repository.AdminSessionRepository;
-
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.UUID;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
@@ -21,56 +15,15 @@ public class AuthService {
     private static final BCryptPasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     private final AdminRepository adminRepository;
-    private final AdminSessionRepository adminSessionRepository;
+    private final JwtService jwtService;
 
-    public AuthService(AdminRepository adminRepository, AdminSessionRepository adminSessionRepository) {
+    public AuthService(AdminRepository adminRepository, JwtService jwtService) {
         this.adminRepository = adminRepository;
-        this.adminSessionRepository = adminSessionRepository;
+        this.jwtService = jwtService;
     }
 
-    public LoginResponse login(LoginRequest request) {
+    public LoginResult loginWithJwt(LoginRequest request) {
         Admin admin = validateAdminCredentials(request);
-        return new LoginResponse(
-            admin.getId(),
-            admin.getNome(),
-            admin.getCognome(),
-            admin.getEmail(),
-            admin.getRuolo(),
-            "Login effettuato"
-        );
-    }
-
-    public AuthMeResponse me(String sessionToken) {
-        if (sessionToken == null || sessionToken.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sessione non presente.");
-        }
-
-        AdminSession session = adminSessionRepository.findByTokenAndRevokedFalse(sessionToken)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token non valido."));
-
-        if (session.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sessione scaduta.");
-        }
-
-        Admin admin = session.getAdmin();
-        return new AuthMeResponse(
-            admin.getId(),
-            admin.getNome(),
-            admin.getCognome(),
-            admin.getEmail(),
-            admin.getRuolo(),
-            "Sessione valida"
-        );
-    }
-
-    public String issueSessionToken(LoginRequest request) {
-        Admin admin = validateAdminCredentials(request);
-        return createSessionToken(admin);
-    }
-
-    public LoginResult loginWithSession(LoginRequest request) {
-        Admin admin = validateAdminCredentials(request);
-        String token = createSessionToken(admin);
         LoginResponse response = new LoginResponse(
             admin.getId(),
             admin.getNome(),
@@ -79,7 +32,19 @@ public class AuthService {
             admin.getRuolo(),
             "Login effettuato"
         );
-        return new LoginResult(response, token);
+        String jwt = jwtService.createToken(admin);
+        return new LoginResult(response, jwt);
+    }
+
+    public AuthMeResponse me(JwtService.AdminPrincipal admin) {
+        return new AuthMeResponse(
+            admin.getId(),
+            admin.getNome(),
+            admin.getCognome(),
+            admin.getEmail(),
+            admin.getRuolo(),
+            "Sessione valida"
+        );
     }
 
     private Admin validateAdminCredentials(LoginRequest request) {
@@ -113,19 +78,14 @@ public class AuthService {
         return admin;
     }
 
-    private String createSessionToken(Admin admin) {
-        LocalDateTime expiresAt = LocalDateTime.now().plusDays(7).truncatedTo(ChronoUnit.SECONDS);
-        String accessToken = UUID.randomUUID().toString().replace("-", "") + UUID.randomUUID().toString().replace("-", "");
-
-        AdminSession session = new AdminSession();
-        session.setAdmin(admin);
-        session.setToken(accessToken);
-        session.setExpiresAt(expiresAt);
-        session.setRevoked(false);
-        adminSessionRepository.save(session);
-        return accessToken;
+    public JwtService.AdminPrincipal requireAdminFromToken(String token) {
+        JwtService.AdminPrincipal admin = jwtService.parseToken(token);
+        if (!"ADMIN".equalsIgnoreCase(admin.getRuolo())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Utente non autorizzato.");
+        }
+        return admin;
     }
 
-    public record LoginResult(LoginResponse response, String sessionToken) {
+    public record LoginResult(LoginResponse response, String jwtToken) {
     }
 }

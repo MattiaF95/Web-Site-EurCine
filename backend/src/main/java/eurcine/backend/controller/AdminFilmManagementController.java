@@ -29,48 +29,48 @@ public class AdminFilmManagementController {
 
     @GetMapping("/titoli")
     public List<AdminFilmTitleOption> getFilmTitles(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String sessionToken
+        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token
     ) {
-        return adminFilmManagementService.getFilmTitles(sessionToken);
+        return adminFilmManagementService.getFilmTitles(token);
     }
 
     @GetMapping("/meta")
     public AdminFilmMetaResponse getMeta(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String sessionToken
+        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token
     ) {
-        return adminFilmManagementService.getMeta(sessionToken);
+        return adminFilmManagementService.getMeta(token);
     }
 
     @GetMapping("/{filmId}")
     public AdminFilmFormData getFilmById(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String sessionToken,
+        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token,
         @PathVariable Long filmId
     ) {
-        return adminFilmManagementService.getFilmById(sessionToken, filmId);
+        return adminFilmManagementService.getFilmById(token, filmId);
     }
 
     @PostMapping("/aggiungi")
     public AdminFilmFormData createFilm(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String sessionToken,
+        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token,
         @RequestBody AdminFilmSaveRequest request
     ) {
-        return adminFilmManagementService.createFilm(sessionToken, request);
+        return adminFilmManagementService.createFilm(token, request);
     }
 
     @PutMapping("/modifica/{filmId}")
     public AdminFilmFormData updateFilm(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String sessionToken,
+        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token,
         @PathVariable Long filmId,
         @RequestBody AdminFilmSaveRequest request
     ) {
-        return adminFilmManagementService.updateFilm(sessionToken, filmId, request);
+        return adminFilmManagementService.updateFilm(token, filmId, request);
     }
 
     @DeleteMapping("/elimina/{filmId}")
     public void deleteFilm(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String sessionToken,
+        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token,
         @PathVariable Long filmId
     ) {
-        adminFilmManagementService.deleteFilm(sessionToken, filmId);
+        adminFilmManagementService.deleteFilm(token, filmId);
     }
 }

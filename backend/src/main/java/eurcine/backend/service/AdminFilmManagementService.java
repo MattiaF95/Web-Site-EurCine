@@ -5,16 +5,13 @@ import eurcine.backend.dto.AdminFilmFormData;
 import eurcine.backend.dto.AdminFilmMetaResponse;
 import eurcine.backend.dto.AdminFilmSaveRequest;
 import eurcine.backend.dto.AdminFilmTitleOption;
-import eurcine.backend.model.AdminSession;
 import eurcine.backend.model.Film;
 import eurcine.backend.model.Genere;
 import eurcine.backend.model.Lingua;
-import eurcine.backend.repository.AdminSessionRepository;
 import eurcine.backend.repository.FilmRepository;
 import eurcine.backend.repository.GenereRepository;
 import eurcine.backend.repository.LinguaRepository;
 import jakarta.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,29 +26,29 @@ public class AdminFilmManagementService {
     private final FilmRepository filmRepository;
     private final LinguaRepository linguaRepository;
     private final GenereRepository genereRepository;
-    private final AdminSessionRepository adminSessionRepository;
+    private final AuthService authService;
 
     public AdminFilmManagementService(
         FilmRepository filmRepository,
         LinguaRepository linguaRepository,
         GenereRepository genereRepository,
-        AdminSessionRepository adminSessionRepository
+        AuthService authService
     ) {
         this.filmRepository = filmRepository;
         this.linguaRepository = linguaRepository;
         this.genereRepository = genereRepository;
-        this.adminSessionRepository = adminSessionRepository;
+        this.authService = authService;
     }
 
-    public List<AdminFilmTitleOption> getFilmTitles(String sessionToken) {
-        requireAdminSession(sessionToken);
+    public List<AdminFilmTitleOption> getFilmTitles(String token) {
+        requireAdmin(token);
         return filmRepository.findAllByOrderByTitoloAsc().stream()
             .map(f -> new AdminFilmTitleOption(f.getId(), f.getTitolo()))
             .toList();
     }
 
-    public AdminFilmMetaResponse getMeta(String sessionToken) {
-        requireAdminSession(sessionToken);
+    public AdminFilmMetaResponse getMeta(String token) {
+        requireAdmin(token);
 
         List<AdminCatalogOption> lingue = linguaRepository.findAll().stream()
             .map(l -> new AdminCatalogOption(l.getId(), l.getNome()))
@@ -64,8 +61,8 @@ public class AdminFilmManagementService {
         return new AdminFilmMetaResponse(lingue, generi);
     }
 
-    public AdminFilmFormData getFilmById(String sessionToken, Long filmId) {
-        requireAdminSession(sessionToken);
+    public AdminFilmFormData getFilmById(String token, Long filmId) {
+        requireAdmin(token);
         Film film = filmRepository.findById(filmId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Film non trovato."));
 
@@ -79,31 +76,31 @@ public class AdminFilmManagementService {
     }
 
     @Transactional
-    public AdminFilmFormData createFilm(String sessionToken, AdminFilmSaveRequest request) {
-        requireAdminSession(sessionToken);
+    public AdminFilmFormData createFilm(String token, AdminFilmSaveRequest request) {
+        requireAdmin(token);
         validateRequest(request, null);
 
         Film film = new Film();
         applyRequest(film, request);
         Film saved = filmRepository.save(film);
-        return getFilmById(sessionToken, saved.getId());
+        return getFilmById(token, saved.getId());
     }
 
     @Transactional
-    public AdminFilmFormData updateFilm(String sessionToken, Long filmId, AdminFilmSaveRequest request) {
-        requireAdminSession(sessionToken);
+    public AdminFilmFormData updateFilm(String token, Long filmId, AdminFilmSaveRequest request) {
+        requireAdmin(token);
         Film film = filmRepository.findById(filmId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Film non trovato."));
         validateRequest(request, filmId);
 
         applyRequest(film, request);
         Film saved = filmRepository.save(film);
-        return getFilmById(sessionToken, saved.getId());
+        return getFilmById(token, saved.getId());
     }
 
     @Transactional
-    public void deleteFilm(String sessionToken, Long filmId) {
-        requireAdminSession(sessionToken);
+    public void deleteFilm(String token, Long filmId) {
+        requireAdmin(token);
         Film film = filmRepository.findById(filmId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Film non trovato."));
 
@@ -163,18 +160,7 @@ public class AdminFilmManagementService {
         film.setGeneri(new LinkedHashSet<>(generi));
     }
 
-    private AdminSession requireAdminSession(String sessionToken) {
-        if (sessionToken == null || sessionToken.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sessione non presente.");
-        }
-
-        AdminSession session = adminSessionRepository.findByTokenAndRevokedFalse(sessionToken)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token non valido."));
-
-        if (session.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sessione scaduta.");
-        }
-
-        return session;
+    private void requireAdmin(String token) {
+        authService.requireAdminFromToken(token);
     }
 }
