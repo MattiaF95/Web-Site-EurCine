@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -29,11 +29,21 @@ export class ProgrammazioneComponent {
   private readonly programmazioneService = inject(ProgrammazioneService);
   private readonly router = inject(Router);
 
-  private readonly weekStart = '2026-06-01';
-  readonly selectedDate = signal(this.weekStart);
-  readonly dayOptions: DayOption[] = this.buildDayOptions(this.weekStart, 7);
+  readonly selectedDate = signal('');
 
   private readonly allItems = toSignal(this.programmazioneService.getAll(), { initialValue: [] as Programmazione[] });
+  private readonly availableDateKeys = toSignal(this.programmazioneService.getAvailableDates(), { initialValue: [] as string[] });
+
+  readonly dayOptions = computed<DayOption[]>(() =>
+    this.availableDateKeys().map((value) => ({
+      value,
+      label: new Date(`${value}T12:00:00`).toLocaleDateString('it-IT', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      })
+    }))
+  );
 
   readonly cards = computed(() => {
     const day = this.selectedDate();
@@ -42,6 +52,21 @@ export class ProgrammazioneComponent {
   });
 
   readonly currentDateLabel = computed(() => this.formatLongDate(this.selectedDate()));
+
+  constructor() {
+    effect(() => {
+      const options = this.dayOptions();
+      if (!options.length) {
+        this.selectedDate.set('');
+        return;
+      }
+
+      const current = this.selectedDate();
+      if (!current || !options.some((o) => o.value === current)) {
+        this.selectedDate.set(options[0].value);
+      }
+    });
+  }
 
   onDateChange(dateValue: string): void {
     this.selectedDate.set(dateValue);
@@ -81,25 +106,9 @@ export class ProgrammazioneComponent {
       });
   }
 
-  private buildDayOptions(startDate: string, days: number): DayOption[] {
-    const options: DayOption[] = [];
-    const base = new Date(`${startDate}T12:00:00`);
-
-    for (let i = 0; i < days; i++) {
-      const d = new Date(base);
-      d.setDate(base.getDate() + i);
-      const value = d.toISOString().slice(0, 10);
-      options.push({
-        value,
-        label: d.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' })
-      });
-    }
-
-    return options;
-  }
-
   private toDateKey(isoDate: string): string {
-    return new Date(isoDate).toISOString().slice(0, 10);
+    const [datePart] = isoDate.split('T');
+    return datePart ?? isoDate;
   }
 
   private formatTime(isoDate: string): string {
@@ -107,6 +116,10 @@ export class ProgrammazioneComponent {
   }
 
   private formatLongDate(dateKey: string): string {
+    if (!dateKey) {
+      return 'Nessuna data disponibile';
+    }
+
     return new Date(`${dateKey}T12:00:00`).toLocaleDateString('it-IT', {
       weekday: 'long',
       day: 'numeric',

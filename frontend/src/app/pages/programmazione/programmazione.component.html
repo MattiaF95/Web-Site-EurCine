@@ -3,7 +3,7 @@
     <div class="page__hero">
       <h1 class="page__title">Spettacoli della settimana</h1>
       <p class="page__text">
-        Selezione film per il giorno scelto.
+        Seleziona i film per il giorno scelto.
       </p>
       <h2 class="page__day-title">{{ currentDateLabel() }}</h2>
     </div>
@@ -16,7 +16,7 @@
         [ngModel]="selectedDate()"
         (ngModelChange)="onDateChange($event)"
       >
-        @for (opt of dayOptions; track opt.value) {
+        @for (opt of dayOptions(); track opt.value) {
           <option [value]="opt.value">{{ opt.label }}</option>
         }
       </select>

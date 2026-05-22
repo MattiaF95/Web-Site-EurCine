@@ -80,7 +80,10 @@ public class AuthService {
 
     public JwtService.AdminPrincipal requireAdminFromToken(String token) {
         JwtService.AdminPrincipal admin = jwtService.parseToken(token);
-        if (!"ADMIN".equalsIgnoreCase(admin.getRuolo())) {
+        String ruolo = admin.getRuolo();
+        boolean isAllowedAdminRole =
+            "ADMIN".equalsIgnoreCase(ruolo) || "SUPER_ADMIN".equalsIgnoreCase(ruolo);
+        if (!isAllowedAdminRole) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Utente non autorizzato.");
         }
         return admin;

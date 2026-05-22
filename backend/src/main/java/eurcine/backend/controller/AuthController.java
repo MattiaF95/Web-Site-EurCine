@@ -20,6 +20,7 @@ import eurcine.backend.service.AuthService;
 public class AuthController {
 
     private static final String SESSION_COOKIE_NAME = "eurcine_session";
+    private static final String SESSION_HINT_COOKIE_NAME = "eurcine_session_present";
     private final AuthService authService;
     private final Environment environment;
 
@@ -40,7 +41,15 @@ public class AuthController {
             .maxAge(7 * 24 * 60 * 60)
             .sameSite(production ? "None" : "Lax")
             .build();
+        ResponseCookie hintCookie = ResponseCookie.from(SESSION_HINT_COOKIE_NAME, "1")
+            .httpOnly(false)
+            .secure(production)
+            .path("/")
+            .maxAge(7 * 24 * 60 * 60)
+            .sameSite(production ? "None" : "Lax")
+            .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, hintCookie.toString());
         return loginResult.response();
     }
 
@@ -59,7 +68,15 @@ public class AuthController {
             .maxAge(0)
             .sameSite(production ? "None" : "Lax")
             .build();
+        ResponseCookie hintCookie = ResponseCookie.from(SESSION_HINT_COOKIE_NAME, "")
+            .httpOnly(false)
+            .secure(production)
+            .path("/")
+            .maxAge(0)
+            .sameSite(production ? "None" : "Lax")
+            .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, hintCookie.toString());
     }
 
     private boolean isProduction() {

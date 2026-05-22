@@ -8,14 +8,16 @@ import eurcine.backend.dto.AdminFilmTitleOption;
 import eurcine.backend.model.Film;
 import eurcine.backend.model.Genere;
 import eurcine.backend.model.Lingua;
+import eurcine.backend.repository.BigliettoRepository;
 import eurcine.backend.repository.FilmRepository;
 import eurcine.backend.repository.GenereRepository;
 import eurcine.backend.repository.LinguaRepository;
+import eurcine.backend.repository.OrdineRepository;
+import eurcine.backend.repository.ProgrammazioneRepository;
 import jakarta.transaction.Transactional;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,17 +28,26 @@ public class AdminFilmManagementService {
     private final FilmRepository filmRepository;
     private final LinguaRepository linguaRepository;
     private final GenereRepository genereRepository;
+    private final ProgrammazioneRepository programmazioneRepository;
+    private final BigliettoRepository bigliettoRepository;
+    private final OrdineRepository ordineRepository;
     private final AuthService authService;
 
     public AdminFilmManagementService(
         FilmRepository filmRepository,
         LinguaRepository linguaRepository,
         GenereRepository genereRepository,
+        ProgrammazioneRepository programmazioneRepository,
+        BigliettoRepository bigliettoRepository,
+        OrdineRepository ordineRepository,
         AuthService authService
     ) {
         this.filmRepository = filmRepository;
         this.linguaRepository = linguaRepository;
         this.genereRepository = genereRepository;
+        this.programmazioneRepository = programmazioneRepository;
+        this.bigliettoRepository = bigliettoRepository;
+        this.ordineRepository = ordineRepository;
         this.authService = authService;
     }
 
@@ -104,15 +115,16 @@ public class AdminFilmManagementService {
         Film film = filmRepository.findById(filmId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Film non trovato."));
 
-        try {
-            filmRepository.delete(film);
-            filmRepository.flush();
-        } catch (DataIntegrityViolationException ex) {
-            throw new ResponseStatusException(
-                HttpStatus.CONFLICT,
-                "Impossibile eliminare il film: esistono programmazioni o dati collegati."
-            );
+        List<Long> programmazioneIds = programmazioneRepository.findIdsByFilmId(filmId);
+
+        if (!programmazioneIds.isEmpty()) {
+            bigliettoRepository.deleteByProgrammazioneIdIn(programmazioneIds);
+            ordineRepository.deleteOrphanOrders();
+            programmazioneRepository.deleteAllByIdInBatch(programmazioneIds);
         }
+
+        filmRepository.delete(film);
+        filmRepository.flush();
     }
 
     private void validateRequest(AdminFilmSaveRequest request, Long currentFilmId) {

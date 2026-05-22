@@ -16,6 +16,12 @@ export const adminAuthGuard: CanActivateFn = () => {
     return of(true);
   }
 
+  // If login state is already available in-memory, avoid forcing a network check
+  // on every admin navigation to prevent false logouts on transient failures.
+  if (authState.isLoggedIn()) {
+    return of(true);
+  }
+
   return authService.me().pipe(
     map((me) => {
       authState.setFromMe(me);

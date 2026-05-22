@@ -30,6 +30,11 @@ public class ProgrammazioneController {
         return programmazioneService.getAll();
     }
 
+    @GetMapping("/date-disponibili")
+    public List<String> getAvailableDates() {
+        return programmazioneService.getAvailableDateKeys();
+    }
+
     @GetMapping("/{programmazioneId}/seat-map")
     public SeatMapDto getSeatMap(@PathVariable Long programmazioneId) {
         return seatMapService.getSeatMap(programmazioneId);

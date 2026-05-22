@@ -30,6 +30,10 @@ public class ProgrammazioneService {
             .toList();
     }
 
+    public List<String> getAvailableDateKeys() {
+        return programmazioneRepository.findAvailableDateKeys();
+    }
+
     public List<HomeProgrammazioneRecord> getDailySchedule(LocalDate day) {
         LocalDateTime dayStart = day.atStartOfDay();
         LocalDateTime dayEnd = day.plusDays(1).atStartOfDay();

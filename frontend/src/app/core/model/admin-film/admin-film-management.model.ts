@@ -27,3 +27,36 @@ export interface AdminFilmSaveRequest {
   linguaId: number;
   genereIds: number[];
 }
+
+export interface AdminProgrammazioneRowRequest {
+  salaId: number;
+  orario: string;
+}
+
+export interface AdminProgrammazioneBatchCreateRequest {
+  giorno: string;
+  filmId: number;
+  items: AdminProgrammazioneRowRequest[];
+}
+
+export interface AdminProgrammazioneCatalogResponse {
+  film: AdminFilmTitleOption[];
+  sale: AdminCatalogOption[];
+}
+
+export interface AdminProgrammazioneCreatedItem {
+  programmazioneId: number;
+  filmId: number;
+  filmTitolo: string;
+  salaId: number;
+  salaNome: string;
+  startAt: string;
+  prezzoBasePre18: number;
+  prezzoBasePost18: number;
+}
+
+export interface AdminProgrammazioneBatchCreateResponse {
+  message: string;
+  createdCount: number;
+  created: AdminProgrammazioneCreatedItem[];
+}

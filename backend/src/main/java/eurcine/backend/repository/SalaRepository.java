@@ -8,6 +8,8 @@ import eurcine.backend.repository.projection.SalaView;
 
 public interface SalaRepository extends JpaRepository<Sala, Long> {
 
+    List<Sala> findAllByOrderByNomeAsc();
+
     @Query("""
         select s.nome as nome
         from Sala s

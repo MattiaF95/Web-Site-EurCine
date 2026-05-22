@@ -14,6 +14,10 @@ export class ProgrammazioneService {
     return this.http.get<Programmazione[]>(this.apiUrl);
   }
 
+  getAvailableDates(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/date-disponibili`);
+  }
+
   getSeatMap(programmazioneId: number): Observable<SeatMap> {
     return this.http.get<SeatMap>(`${this.apiUrl}/${programmazioneId}/seat-map`);
   }

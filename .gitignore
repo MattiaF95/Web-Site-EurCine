@@ -68,6 +68,7 @@ backend/.vscode/
 
 # Sensitive config (real credentials)
 backend/src/main/resources/application.properties
+backend/src/main/resources/application-prod.properties
 !backend/src/main/resources/application-example.properties
 
 # Local Maven cache in repo

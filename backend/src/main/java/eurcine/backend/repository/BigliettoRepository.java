@@ -14,6 +14,9 @@ public interface BigliettoRepository extends JpaRepository<Biglietto, Long> {
     List<Biglietto> findByOrdineId(Long ordineId);
 
     List<Biglietto> findByProgrammazioneId(Long programmazioneId);
+    void deleteByProgrammazioneId(Long programmazioneId);
+
+    void deleteByProgrammazioneIdIn(List<Long> programmazioneIds);
 
     @Query("""
         select b.posto.id

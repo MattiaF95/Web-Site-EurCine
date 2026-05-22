@@ -40,7 +40,7 @@ export class App {
   readonly loginError = signal('');
 
   constructor() {
-    this.authState.hydrateFromStorage();
+    this.authState.hydrateFromCookieHint();
   }
 
   toggleSearch(): void {

@@ -6,24 +6,28 @@ import { AuthMeResponse, LoginResponse, AuthSession } from '../model/auth.model'
 
 @Injectable({ providedIn: 'root' })
 export class AuthStateService {
+  private static readonly SESSION_HINT_COOKIE = 'eurcine_session_present=1';
+
   private readonly authService = inject(AuthService);
   private readonly platformId = inject(PLATFORM_ID);
 
   private readonly sessionSignal = signal<AuthSession | null>(null);
   private readonly showWelcomeSignal = signal(false);
-  private hydrateStarted = false;
 
   readonly session = this.sessionSignal.asReadonly();
   readonly isLoggedIn = computed(() => !!this.sessionSignal());
   // Mostra il messaggio di benvenuto solo subito dopo il login.
   readonly showWelcome = this.showWelcomeSignal.asReadonly();
 
-  hydrateFromStorage(): void {
-    // Si avvia una sola volta: controlla il cookie HttpOnly e recupera l'utente loggato.
-    if (this.hydrateStarted || !isPlatformBrowser(this.platformId)) {
+  hydrateFromCookieHint(): void {
+    if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    this.hydrateStarted = true;
+
+    // Avoid /auth/me on public guest sessions; call it only when hint cookie exists.
+    if (!document.cookie.includes(AuthStateService.SESSION_HINT_COOKIE)) {
+      return;
+    }
 
     this.authService.me().pipe(
       catchError(() => {
@@ -34,7 +38,7 @@ export class AuthStateService {
       if (!me) {
         return;
       }
-      this.sessionSignal.set(this.toSession(me));
+      this.setFromMe(me);
     });
   }
 

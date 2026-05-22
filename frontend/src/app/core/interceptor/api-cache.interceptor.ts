@@ -21,6 +21,7 @@ const TTL_BY_PATH: Array<{ path: string; ttlMs: number }> = [
 
 const INVALIDATE_PREFIXES = [
   '/api/admin/film',
+  '/api/admin/programmazione',
   '/api/programmazione',
   '/api/ordini'
 ];

@@ -2,7 +2,135 @@
   <div class="page__content page__content--wide">
     <div class="page__hero">
       <h1 class="page__title">Gestisci Programmazione</h1>
-      <p class="page__text">Area amministrativa protetta. Qui potrai gestire la programmazione.</p>
+      <p class="page__text">Area amministrativa protetta.</p>
     </div>
+
+    @if (loading()) {
+      <p class="page__text">Caricamento catalogo...</p>
+    } @else {
+      <div class="admin-actions">
+        <button
+          type="button"
+          class="admin-mode-btn admin-mode-btn--add"
+          [class.is-active]="mode() === 'add'"
+          (click)="setMode('add')"
+        >
+          Aggiungi
+        </button>
+        <button
+          type="button"
+          class="admin-mode-btn admin-mode-btn--delete"
+          [class.is-active]="mode() === 'delete'"
+          (click)="setMode('delete')"
+        >
+          Elimina
+        </button>
+      </div>
+
+      @if (mode() === 'add') {
+        <div class="admin-programmazione-card admin-programmazione-card--add">
+          <label>
+            Giorno
+            <input type="date" [ngModel]="giorno()" (ngModelChange)="onGiornoChange($event)" />
+          </label>
+
+          @if (showFilmSelect()) {
+            <label>
+              Film
+              <select [ngModel]="filmId()" (ngModelChange)="onFilmChange($event)">
+                <option [ngValue]="null">Seleziona un film</option>
+                @for (film of filmOptions(); track film.id) {
+                  <option [ngValue]="film.id">{{ film.titolo }}</option>
+                }
+              </select>
+            </label>
+          }
+
+          @if (showRows()) {
+            <div class="rows-block">
+              @for (row of rows(); track $index) {
+                <div class="row-item">
+                  <label>
+                    Sala
+                    <select [ngModel]="row.salaId" (ngModelChange)="updateRowSala($index, $event)">
+                      <option [ngValue]="null">Seleziona sala</option>
+                      @for (sala of saleOptions(); track sala.id) {
+                        <option [ngValue]="sala.id">{{ sala.nome }}</option>
+                      }
+                    </select>
+                  </label>
+
+                  <label>
+                    Orario
+                    <input type="time" step="600" [ngModel]="row.orario" (ngModelChange)="updateRowOrario($index, $event)" />
+                  </label>
+
+                  <button type="button" class="admin-plus-btn" (click)="addRow($index)">+</button>
+                </div>
+              }
+            </div>
+
+            <button type="button" class="admin-submit-btn" [disabled]="!canSubmit() || saving()" (click)="submit()">
+              {{ saving() ? 'Salvataggio...' : 'Aggiungi' }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (mode() === 'delete') {
+        <div class="admin-programmazione-card admin-programmazione-card--delete">
+          <label>
+            Film
+            <select [ngModel]="deleteFilmId()" (ngModelChange)="onDeleteFilmChange($event)">
+              <option [ngValue]="null">Seleziona un film</option>
+              @for (film of filmOptions(); track film.id) {
+                <option [ngValue]="film.id">{{ film.titolo }}</option>
+              }
+            </select>
+          </label>
+
+          @if (loadingDeleteItems()) {
+            <p class="page__text">Caricamento programmazioni...</p>
+          } @else if (deleteFilmId() && !deleteItems().length) {
+            <p class="page__text">Nessuna programmazione trovata per questo film.</p>
+          } @else if (deleteItems().length) {
+            <div class="delete-groups">
+              @for (group of deleteGroups(); track group.dayKey) {
+                <div class="delete-group-card">
+                  <h3 class="delete-group-title">{{ group.dayLabel }}</h3>
+                  <div class="delete-slot-list">
+                    @for (item of group.items; track item.programmazioneId) {
+                      <button
+                        type="button"
+                        class="delete-slot-btn"
+                        [disabled]="deletingProgrammazioneId() === item.programmazioneId"
+                        (click)="deleteProgrammazione(item)"
+                      >
+                        {{ formatTime(item.startAt) }} - {{ item.salaNome }}
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      @if (error()) {
+        <p class="admin-error">{{ error() }}</p>
+      }
+
+      @if (success()) {
+        <p class="admin-success">{{ success() }}</p>
+        @if (createdSummary().length) {
+          <ul class="admin-success-list">
+            @for (line of createdSummary(); track line) {
+              <li>{{ line }}</li>
+            }
+          </ul>
+        }
+      }
+    }
   </div>
 </section>

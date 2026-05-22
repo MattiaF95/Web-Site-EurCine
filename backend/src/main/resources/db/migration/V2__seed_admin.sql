@@ -1,5 +1,4 @@
 -- Seed admin utente (idempotente)
--- Nota: password_hash viene confrontata in chiaro da AuthService (didattico)
 
 INSERT INTO utente (nome, cognome, email, password_hash, created_at)
 SELECT 'Admin', 'Eurcine', 'admin@eurcine.it', 'admin123', NOW()

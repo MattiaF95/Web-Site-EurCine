@@ -68,7 +68,8 @@ export class HomeComponent {
   }
 
   private toDateKey(isoDate: string): string {
-    return new Date(isoDate).toISOString().slice(0, 10);
+    const [datePart] = isoDate.split('T');
+    return datePart ?? isoDate;
   }
 
   private formatTime(isoDate: string): string {

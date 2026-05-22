@@ -1,3 +1,174 @@
 .page-admin {
   background-image: url('/assets/images/logo.jpg');
 }
+
+.admin-programmazione-card {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1rem;
+  border-radius: 0.7rem;
+  border: 1px solid rgba(174, 204, 255, 0.42);
+  background: rgba(10, 22, 42, 0.82);
+  display: grid;
+  gap: 0.8rem;
+}
+
+.admin-actions {
+  max-width: 860px;
+  margin: 0 auto 0.8rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.admin-mode-btn {
+  border: 1px solid rgba(176, 203, 255, 0.42);
+  border-radius: 0.55rem;
+  background: rgba(30, 69, 136, 0.3);
+  color: #edf5ff;
+  padding: 0.58rem 0.9rem;
+  cursor: pointer;
+}
+
+.admin-mode-btn--add {
+  border-color: rgba(143, 231, 180, 0.55);
+  background: rgba(26, 110, 70, 0.32);
+}
+
+.admin-mode-btn--delete {
+  border-color: rgba(255, 145, 145, 0.55);
+  background: rgba(126, 36, 36, 0.32);
+}
+
+.admin-mode-btn--add.is-active {
+  background: rgba(26, 110, 70, 0.7);
+}
+
+.admin-mode-btn--delete.is-active {
+  background: rgba(126, 36, 36, 0.7);
+}
+
+.admin-programmazione-card--add {
+  border-color: rgba(143, 231, 180, 0.5);
+  background: rgba(16, 49, 34, 0.8);
+}
+
+.admin-programmazione-card--delete {
+  border-color: rgba(255, 145, 145, 0.5);
+  background: rgba(58, 22, 22, 0.8);
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  color: #dbeaff;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(175, 206, 255, 0.4);
+  background: rgba(12, 27, 55, 0.8);
+  color: #edf5ff;
+}
+
+.rows-block {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.row-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.6rem;
+  align-items: end;
+}
+
+.admin-plus-btn,
+.admin-submit-btn {
+  border: 1px solid rgba(176, 203, 255, 0.42);
+  border-radius: 0.55rem;
+  background: rgba(30, 69, 136, 0.48);
+  color: #edf5ff;
+  padding: 0.58rem 0.9rem;
+  cursor: pointer;
+}
+
+.admin-plus-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.admin-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.admin-error {
+  margin: 0;
+  color: #ffb4b4;
+}
+
+.admin-success {
+  margin: 0;
+  color: #8ef0b6;
+}
+
+.admin-success-list {
+  margin: 0;
+  padding-left: 1rem;
+  color: #d8ffe9;
+}
+
+.delete-groups {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.delete-group-card {
+  border: 1px solid rgba(176, 203, 255, 0.35);
+  border-radius: 0.6rem;
+  padding: 0.7rem;
+  background: rgba(12, 27, 55, 0.55);
+}
+
+.delete-group-title {
+  margin: 0 0 0.55rem;
+  color: #dbeaff;
+  font-size: 1rem;
+}
+
+.delete-slot-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0.45rem;
+}
+
+.delete-slot-btn {
+  border: 1px solid rgba(176, 203, 255, 0.35);
+  border-radius: 0.5rem;
+  background: rgba(136, 30, 30, 0.35);
+  color: #ffe9e9;
+  padding: 0.45rem 0.55rem;
+  cursor: pointer;
+}
+
+.delete-slot-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .row-item {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-plus-btn {
+    width: 100%;
+  }
+}
