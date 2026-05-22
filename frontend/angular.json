@@ -36,7 +36,10 @@
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
-              "allowedHosts": []
+              "allowedHosts": [
+                "web-site-eurcine-1.onrender.com",
+                "localhost"
+              ]
             },
             "ssr": {
               "entry": "src/server.ts"
