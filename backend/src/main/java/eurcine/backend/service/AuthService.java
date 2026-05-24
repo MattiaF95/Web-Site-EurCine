@@ -78,17 +78,6 @@ public class AuthService {
         return admin;
     }
 
-    public JwtService.AdminPrincipal requireAdminFromToken(String token) {
-        JwtService.AdminPrincipal admin = jwtService.parseToken(token);
-        String ruolo = admin.getRuolo();
-        boolean isAllowedAdminRole =
-            "ADMIN".equalsIgnoreCase(ruolo) || "SUPER_ADMIN".equalsIgnoreCase(ruolo);
-        if (!isAllowedAdminRole) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Utente non autorizzato.");
-        }
-        return admin;
-    }
-
     public record LoginResult(LoginResponse response, String jwtToken) {
     }
 }

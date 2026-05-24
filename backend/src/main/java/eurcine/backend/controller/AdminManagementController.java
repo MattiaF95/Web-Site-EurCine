@@ -11,7 +11,6 @@ import eurcine.backend.dto.AdminProgrammazioneCreatedItem;
 import eurcine.backend.service.AdminFilmManagementService;
 import eurcine.backend.service.AdminProgrammazioneManagementService;
 import java.util.List;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin")
 public class AdminManagementController {
 
-    private static final String SESSION_COOKIE_NAME = "eurcine_session";
     private final AdminFilmManagementService adminFilmManagementService;
     private final AdminProgrammazioneManagementService adminProgrammazioneManagementService;
 
@@ -38,80 +36,59 @@ public class AdminManagementController {
     }
 
     @GetMapping("/film/titoli")
-    public List<AdminFilmTitleOption> getFilmTitles(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token
-    ) {
-        return adminFilmManagementService.getFilmTitles(token);
+    public List<AdminFilmTitleOption> getFilmTitles() {
+        return adminFilmManagementService.getFilmTitles();
     }
 
     @GetMapping("/film/meta")
-    public AdminFilmMetaResponse getMeta(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token
-    ) {
-        return adminFilmManagementService.getMeta(token);
+    public AdminFilmMetaResponse getMeta() {
+        return adminFilmManagementService.getMeta();
     }
 
     @GetMapping("/film/{filmId}")
-    public AdminFilmFormData getFilmById(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token,
-        @PathVariable Long filmId
-    ) {
-        return adminFilmManagementService.getFilmById(token, filmId);
+    public AdminFilmFormData getFilmById(@PathVariable Long filmId) {
+        return adminFilmManagementService.getFilmById(filmId);
     }
 
     @PostMapping("/film/aggiungi")
-    public AdminFilmFormData createFilm(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token,
-        @RequestBody AdminFilmSaveRequest request
-    ) {
-        return adminFilmManagementService.createFilm(token, request);
+    public AdminFilmFormData createFilm(@RequestBody AdminFilmSaveRequest request) {
+        return adminFilmManagementService.createFilm(request);
     }
 
     @PutMapping("/film/modifica/{filmId}")
     public AdminFilmFormData updateFilm(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token,
         @PathVariable Long filmId,
         @RequestBody AdminFilmSaveRequest request
     ) {
-        return adminFilmManagementService.updateFilm(token, filmId, request);
+        return adminFilmManagementService.updateFilm(filmId, request);
     }
 
     @DeleteMapping("/film/elimina/{filmId}")
-    public void deleteFilm(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token,
-        @PathVariable Long filmId
-    ) {
-        adminFilmManagementService.deleteFilm(token, filmId);
+    public void deleteFilm(@PathVariable Long filmId) {
+        adminFilmManagementService.deleteFilm(filmId);
     }
 
     @GetMapping("/programmazione/catalog")
-    public AdminProgrammazioneCatalogResponse getProgrammazioneCatalog(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token
-    ) {
-        return adminProgrammazioneManagementService.getCatalog(token);
+    public AdminProgrammazioneCatalogResponse getProgrammazioneCatalog() {
+        return adminProgrammazioneManagementService.getCatalog();
     }
 
     @PostMapping("/programmazione/aggiungi")
     public AdminProgrammazioneBatchCreateResponse createProgrammazioni(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token,
         @RequestBody AdminProgrammazioneBatchCreateRequest request
     ) {
-        return adminProgrammazioneManagementService.createProgrammazioni(token, request);
+        return adminProgrammazioneManagementService.createProgrammazioni(request);
     }
 
     @GetMapping("/programmazione/film/{filmId}")
     public List<AdminProgrammazioneCreatedItem> getProgrammazioniByFilm(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token,
         @PathVariable Long filmId
     ) {
-        return adminProgrammazioneManagementService.getProgrammazioniByFilmId(token, filmId);
+        return adminProgrammazioneManagementService.getProgrammazioniByFilmId(filmId);
     }
 
     @DeleteMapping("/programmazione/elimina/{programmazioneId}")
-    public void deleteProgrammazione(
-        @CookieValue(name = SESSION_COOKIE_NAME, required = false) String token,
-        @PathVariable Long programmazioneId
-    ) {
-        adminProgrammazioneManagementService.deleteProgrammazione(token, programmazioneId);
+    public void deleteProgrammazione(@PathVariable Long programmazioneId) {
+        adminProgrammazioneManagementService.deleteProgrammazione(programmazioneId);
     }
 }

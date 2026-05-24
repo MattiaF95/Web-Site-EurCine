@@ -31,7 +31,6 @@ public class AdminFilmManagementService {
     private final ProgrammazioneRepository programmazioneRepository;
     private final BigliettoRepository bigliettoRepository;
     private final OrdineRepository ordineRepository;
-    private final AuthService authService;
 
     public AdminFilmManagementService(
         FilmRepository filmRepository,
@@ -39,8 +38,7 @@ public class AdminFilmManagementService {
         GenereRepository genereRepository,
         ProgrammazioneRepository programmazioneRepository,
         BigliettoRepository bigliettoRepository,
-        OrdineRepository ordineRepository,
-        AuthService authService
+        OrdineRepository ordineRepository
     ) {
         this.filmRepository = filmRepository;
         this.linguaRepository = linguaRepository;
@@ -48,19 +46,15 @@ public class AdminFilmManagementService {
         this.programmazioneRepository = programmazioneRepository;
         this.bigliettoRepository = bigliettoRepository;
         this.ordineRepository = ordineRepository;
-        this.authService = authService;
     }
 
-    public List<AdminFilmTitleOption> getFilmTitles(String token) {
-        requireAdmin(token);
+    public List<AdminFilmTitleOption> getFilmTitles() {
         return filmRepository.findAllByOrderByTitoloAsc().stream()
             .map(f -> new AdminFilmTitleOption(f.getId(), f.getTitolo()))
             .toList();
     }
 
-    public AdminFilmMetaResponse getMeta(String token) {
-        requireAdmin(token);
-
+    public AdminFilmMetaResponse getMeta() {
         List<AdminCatalogOption> lingue = linguaRepository.findAll().stream()
             .map(l -> new AdminCatalogOption(l.getId(), l.getNome()))
             .toList();
@@ -72,8 +66,7 @@ public class AdminFilmManagementService {
         return new AdminFilmMetaResponse(lingue, generi);
     }
 
-    public AdminFilmFormData getFilmById(String token, Long filmId) {
-        requireAdmin(token);
+    public AdminFilmFormData getFilmById(Long filmId) {
         Film film = filmRepository.findById(filmId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Film non trovato."));
 
@@ -87,31 +80,28 @@ public class AdminFilmManagementService {
     }
 
     @Transactional
-    public AdminFilmFormData createFilm(String token, AdminFilmSaveRequest request) {
-        requireAdmin(token);
+    public AdminFilmFormData createFilm(AdminFilmSaveRequest request) {
         validateRequest(request, null);
 
         Film film = new Film();
         applyRequest(film, request);
         Film saved = filmRepository.save(film);
-        return getFilmById(token, saved.getId());
+        return getFilmById(saved.getId());
     }
 
     @Transactional
-    public AdminFilmFormData updateFilm(String token, Long filmId, AdminFilmSaveRequest request) {
-        requireAdmin(token);
+    public AdminFilmFormData updateFilm(Long filmId, AdminFilmSaveRequest request) {
         Film film = filmRepository.findById(filmId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Film non trovato."));
         validateRequest(request, filmId);
 
         applyRequest(film, request);
         Film saved = filmRepository.save(film);
-        return getFilmById(token, saved.getId());
+        return getFilmById(saved.getId());
     }
 
     @Transactional
-    public void deleteFilm(String token, Long filmId) {
-        requireAdmin(token);
+    public void deleteFilm(Long filmId) {
         Film film = filmRepository.findById(filmId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Film non trovato."));
 
@@ -170,9 +160,5 @@ public class AdminFilmManagementService {
         film.setDurataMin(request.durataMin());
         film.setLingua(lingua);
         film.setGeneri(new LinkedHashSet<>(generi));
-    }
-
-    private void requireAdmin(String token) {
-        authService.requireAdminFromToken(token);
     }
 }

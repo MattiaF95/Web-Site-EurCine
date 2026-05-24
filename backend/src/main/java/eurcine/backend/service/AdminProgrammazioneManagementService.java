@@ -29,7 +29,6 @@ public class AdminProgrammazioneManagementService {
     private static final BigDecimal PREZZO_PRE18 = new BigDecimal("4.90");
     private static final BigDecimal PREZZO_POST18 = new BigDecimal("7.90");
 
-    private final AuthService authService;
     private final FilmRepository filmRepository;
     private final SalaRepository salaRepository;
     private final ProgrammazioneRepository programmazioneRepository;
@@ -37,14 +36,12 @@ public class AdminProgrammazioneManagementService {
     private final OrdineRepository ordineRepository;
 
     public AdminProgrammazioneManagementService(
-        AuthService authService,
         FilmRepository filmRepository,
         SalaRepository salaRepository,
         ProgrammazioneRepository programmazioneRepository,
         BigliettoRepository bigliettoRepository,
         OrdineRepository ordineRepository
     ) {
-        this.authService = authService;
         this.filmRepository = filmRepository;
         this.salaRepository = salaRepository;
         this.programmazioneRepository = programmazioneRepository;
@@ -52,9 +49,7 @@ public class AdminProgrammazioneManagementService {
         this.ordineRepository = ordineRepository;
     }
 
-    public AdminProgrammazioneCatalogResponse getCatalog(String token) {
-        requireAdmin(token);
-
+    public AdminProgrammazioneCatalogResponse getCatalog() {
         List<AdminFilmTitleOption> film = filmRepository.findAllByOrderByTitoloAsc().stream()
             .map(f -> new AdminFilmTitleOption(f.getId(), f.getTitolo()))
             .toList();
@@ -68,10 +63,8 @@ public class AdminProgrammazioneManagementService {
 
     @Transactional
     public AdminProgrammazioneBatchCreateResponse createProgrammazioni(
-        String token,
         AdminProgrammazioneBatchCreateRequest request
     ) {
-        requireAdmin(token);
         validate(request);
 
         if (!filmRepository.existsById(request.filmId())) {
@@ -128,8 +121,7 @@ public class AdminProgrammazioneManagementService {
         );
     }
 
-    public List<AdminProgrammazioneCreatedItem> getProgrammazioniByFilmId(String token, Long filmId) {
-        requireAdmin(token);
+    public List<AdminProgrammazioneCreatedItem> getProgrammazioniByFilmId(Long filmId) {
         if (filmId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Film obbligatorio.");
         }
@@ -149,8 +141,7 @@ public class AdminProgrammazioneManagementService {
     }
 
     @Transactional
-    public void deleteProgrammazione(String token, Long programmazioneId) {
-        requireAdmin(token);
+    public void deleteProgrammazione(Long programmazioneId) {
         Programmazione programmazione = programmazioneRepository.findById(programmazioneId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Programmazione non trovata."));
 
@@ -190,9 +181,5 @@ public class AdminProgrammazioneManagementService {
                 );
             }
         }
-    }
-
-    private void requireAdmin(String token) {
-        authService.requireAdminFromToken(token);
     }
 }

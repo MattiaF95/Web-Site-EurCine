@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +14,7 @@ import eurcine.backend.dto.AuthMeResponse;
 import eurcine.backend.dto.LoginRequest;
 import eurcine.backend.dto.LoginResponse;
 import eurcine.backend.service.AuthService;
+import eurcine.backend.service.JwtService;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -54,8 +55,8 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public AuthMeResponse me(@CookieValue(name = SESSION_COOKIE_NAME, required = false) String token) {
-        return authService.me(authService.requireAdminFromToken(token));
+    public AuthMeResponse me(@AuthenticationPrincipal JwtService.AdminPrincipal admin) {
+        return authService.me(admin);
     }
 
     @PostMapping("/logout")
