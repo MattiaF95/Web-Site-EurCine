@@ -97,6 +97,11 @@ public class AuthController {
                 return true;
             }
         }
-        return false;
+        String renderFlag = System.getenv("RENDER");
+        if (renderFlag != null && !renderFlag.isBlank()) {
+            return true;
+        }
+        String renderExternalUrl = System.getenv("RENDER_EXTERNAL_URL");
+        return renderExternalUrl != null && !renderExternalUrl.isBlank();
     }
 }

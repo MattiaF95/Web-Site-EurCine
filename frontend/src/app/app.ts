@@ -160,10 +160,10 @@ export class App {
             this.loginPassword.set('');
           },
           error: () => {
-            this.authState.setFromLogin(response);
+            this.authState.clearSession();
             this.loginLoading.set(false);
             this.loginPassword.set('');
-            this.loginError.set('Login riuscito, ma inizializzazione CSRF non completata. Riprova l\'azione.');
+            this.loginError.set('Login non completato: sessione non valida in produzione. Verifica cookie/CORS e riprova.');
           }
         });
       },
