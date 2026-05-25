@@ -20,6 +20,7 @@ public class FilmService {
                 view.getTitolo(),
                 view.getDurataMin(),
                 view.getLinguaNome(),
+                view.getTrama(),
                 view.getGeneriNomi()
             ))
             .toList();
@@ -31,6 +32,7 @@ public class FilmService {
                 view.getTitolo(),
                 view.getDurataMin(),
                 view.getLinguaNome(),
+                view.getTrama(),
                 view.getGeneriNomi()
             ))
             .orElseThrow(() -> new IllegalArgumentException("Film non trovato: " + titolo));

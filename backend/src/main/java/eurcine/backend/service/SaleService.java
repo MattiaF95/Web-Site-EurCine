@@ -16,7 +16,11 @@ public class SaleService {
 
     public List<SalaRecord> getAll() {
         return salaRepository.findAllProjected().stream()
-            .map(view -> new SalaRecord(view.getNome()))
+            .map(view -> new SalaRecord(
+                view.getNome(),
+                view.getDescrizione(),
+                view.getCaratteristicheNomi()
+            ))
             .toList();
     }
 }

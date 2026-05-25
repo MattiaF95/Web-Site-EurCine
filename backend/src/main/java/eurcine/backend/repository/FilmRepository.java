@@ -17,11 +17,12 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
         select f.titolo as titolo,
                f.durataMin as durataMin,
                l.nome as linguaNome,
+               f.trama as trama,
                function('group_concat', g.nome) as generiNomi
         from Film f
         join f.lingua l
         left join f.generi g
-        group by f.titolo, f.durataMin, l.nome
+        group by f.titolo, f.durataMin, l.nome, f.trama
         order by f.titolo asc
         """)
     List<FilmView> findAllProjected();
@@ -30,12 +31,13 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
         select f.titolo as titolo,
                f.durataMin as durataMin,
                l.nome as linguaNome,
+               f.trama as trama,
                function('group_concat', g.nome) as generiNomi
         from Film f
         join f.lingua l
         left join f.generi g
         where lower(f.titolo) = lower(:titolo)
-        group by f.titolo, f.durataMin, l.nome
+        group by f.titolo, f.durataMin, l.nome, f.trama
         """)
     Optional<FilmView> findProjectedByTitoloIgnoreCase(String titolo);
 

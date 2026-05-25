@@ -1,6 +1,8 @@
 package eurcine.backend.dto;
 
 public record SalaRecord(
-    String nome
+    String nome,
+    String descrizione,
+    String caratteristicheNomi
 ) {
 }

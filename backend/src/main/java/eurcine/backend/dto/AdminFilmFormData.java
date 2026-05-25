@@ -7,6 +7,7 @@ public record AdminFilmFormData(
     String titolo,
     Integer durataMin,
     Long linguaId,
+    String trama,
     List<Long> genereIds
 ) {
 }

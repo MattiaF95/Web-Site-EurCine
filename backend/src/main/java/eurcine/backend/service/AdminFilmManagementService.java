@@ -75,6 +75,7 @@ public class AdminFilmManagementService {
             film.getTitolo(),
             film.getDurataMin(),
             film.getLingua().getId(),
+            film.getTrama(),
             film.getGeneri().stream().map(Genere::getId).toList()
         );
     }
@@ -135,6 +136,11 @@ public class AdminFilmManagementService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lingua obbligatoria.");
         }
 
+        String trama = request.trama() == null ? "" : request.trama().trim();
+        if (trama.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trama obbligatoria.");
+        }
+
         filmRepository.findByTitoloIgnoreCase(titolo).ifPresent(existing -> {
             if (currentFilmId == null || !existing.getId().equals(currentFilmId)) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Esiste già un film con questo titolo.");
@@ -159,6 +165,7 @@ public class AdminFilmManagementService {
         film.setTitolo(request.titolo().trim());
         film.setDurataMin(request.durataMin());
         film.setLingua(lingua);
+        film.setTrama(request.trama().trim());
         film.setGeneri(new LinkedHashSet<>(generi));
     }
 }

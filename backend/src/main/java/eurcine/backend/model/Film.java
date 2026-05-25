@@ -46,6 +46,9 @@ public class Film {
     @JoinColumn(name = "lingua_id", nullable = false)
     private Lingua lingua;
 
+    @Column(name = "trama", columnDefinition = "TEXT")
+    private String trama;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "film_genere",

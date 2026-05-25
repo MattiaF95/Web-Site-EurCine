@@ -8,5 +8,7 @@ public interface FilmView {
 
     String getLinguaNome();
 
+    String getTrama();
+
     String getGeneriNomi();
 }
