@@ -45,18 +45,9 @@ export class RegisterComponent {
       password: value.password!
     }).subscribe({
       next: (response) => {
-        this.authService.me().subscribe({
-          next: () => {
-            this.authState.setFromLogin(response);
-            this.loading.set(false);
-            void this.router.navigate(['/home']);
-          },
-          error: () => {
-            this.authState.clearSession();
-            this.loading.set(false);
-            this.error.set('Registrazione completata ma sessione non valida in produzione. Verifica cookie/CORS.');
-          }
-        });
+        this.authState.setFromLogin(response);
+        this.loading.set(false);
+        void this.router.navigate(['/home']);
       },
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);

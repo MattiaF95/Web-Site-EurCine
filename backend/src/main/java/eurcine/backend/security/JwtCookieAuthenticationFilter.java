@@ -19,6 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Component
 public class JwtCookieAuthenticationFilter extends OncePerRequestFilter {
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
     private static final String SESSION_COOKIE_NAME = "eurcine_session";
     private final JwtService jwtService;
 
@@ -33,7 +35,10 @@ public class JwtCookieAuthenticationFilter extends OncePerRequestFilter {
         FilterChain filterChain
     ) throws ServletException, IOException {
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            String token = readSessionToken(request);
+            String token = readBearerToken(request);
+            if (token == null || token.isBlank()) {
+                token = readSessionToken(request);
+            }
             if (token != null && !token.isBlank()) {
                 try {
                     JwtService.UserPrincipal principal = jwtService.parseToken(token);
@@ -48,6 +53,14 @@ public class JwtCookieAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private static String readBearerToken(HttpServletRequest request) {
+        String header = request.getHeader(AUTHORIZATION_HEADER);
+        if (header == null || header.isBlank() || !header.startsWith(BEARER_PREFIX)) {
+            return null;
+        }
+        return header.substring(BEARER_PREFIX.length()).trim();
     }
 
     private static String readSessionToken(HttpServletRequest request) {

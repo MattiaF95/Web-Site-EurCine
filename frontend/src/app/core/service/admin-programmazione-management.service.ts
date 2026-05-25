@@ -15,24 +15,18 @@ export class AdminProgrammazioneManagementService {
   private readonly apiUrl = `${environment.apiBaseUrl}/api/admin/programmazione`;
 
   getCatalog(): Observable<AdminProgrammazioneCatalogResponse> {
-    return this.http.get<AdminProgrammazioneCatalogResponse>(`${this.apiUrl}/catalog`, { withCredentials: true });
+    return this.http.get<AdminProgrammazioneCatalogResponse>(`${this.apiUrl}/catalog`);
   }
 
   createBatch(payload: AdminProgrammazioneBatchCreateRequest): Observable<AdminProgrammazioneBatchCreateResponse> {
-    return this.http.post<AdminProgrammazioneBatchCreateResponse>(`${this.apiUrl}/aggiungi`, payload, {
-      withCredentials: true
-    });
+    return this.http.post<AdminProgrammazioneBatchCreateResponse>(`${this.apiUrl}/aggiungi`, payload);
   }
 
   getByFilm(filmId: number): Observable<AdminProgrammazioneCreatedItem[]> {
-    return this.http.get<AdminProgrammazioneCreatedItem[]>(`${this.apiUrl}/film/${filmId}`, {
-      withCredentials: true
-    });
+    return this.http.get<AdminProgrammazioneCreatedItem[]>(`${this.apiUrl}/film/${filmId}`);
   }
 
   deleteProgrammazione(programmazioneId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/elimina/${programmazioneId}`, {
-      withCredentials: true
-    });
+    return this.http.delete<void>(`${this.apiUrl}/elimina/${programmazioneId}`);
   }
 }

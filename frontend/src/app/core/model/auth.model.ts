@@ -10,6 +10,7 @@ export interface LoginResponse {
   email: string;
   ruolo: string;
   message: string;
+  token: string;
 }
 
 export interface AuthMeResponse {

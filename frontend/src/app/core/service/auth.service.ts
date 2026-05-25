@@ -10,18 +10,18 @@ export class AuthService {
   private readonly apiUrl = `${environment.apiBaseUrl}/api/auth`;
 
   login(payload: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, payload, { withCredentials: true });
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, payload);
   }
 
   register(payload: RegisterRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, payload, { withCredentials: true });
+    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, payload);
   }
 
   me(): Observable<AuthMeResponse> {
-    return this.http.get<AuthMeResponse>(`${this.apiUrl}/me`, { withCredentials: true });
+    return this.http.get<AuthMeResponse>(`${this.apiUrl}/me`);
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/logout`, {}, { withCredentials: true });
+    return this.http.post<void>(`${this.apiUrl}/logout`, {});
   }
 }

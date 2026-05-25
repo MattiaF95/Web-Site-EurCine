@@ -15,26 +15,26 @@ export class FilmManagementService {
   private readonly apiUrl = `${environment.apiBaseUrl}/api/admin`;
 
   getFilmTitles(): Observable<AdminFilmTitleOption[]> {
-    return this.http.get<AdminFilmTitleOption[]>(`${this.apiUrl}/film/titoli`, { withCredentials: true });
+    return this.http.get<AdminFilmTitleOption[]>(`${this.apiUrl}/film/titoli`);
   }
 
   getMeta(): Observable<AdminFilmMetaResponse> {
-    return this.http.get<AdminFilmMetaResponse>(`${this.apiUrl}/film/meta`, { withCredentials: true });
+    return this.http.get<AdminFilmMetaResponse>(`${this.apiUrl}/film/meta`);
   }
 
   getFilmById(filmId: number): Observable<AdminFilmFormData> {
-    return this.http.get<AdminFilmFormData>(`${this.apiUrl}/film/${filmId}`, { withCredentials: true });
+    return this.http.get<AdminFilmFormData>(`${this.apiUrl}/film/${filmId}`);
   }
 
   createFilm(payload: AdminFilmSaveRequest): Observable<AdminFilmFormData> {
-    return this.http.post<AdminFilmFormData>(`${this.apiUrl}/film/aggiungi`, payload, { withCredentials: true });
+    return this.http.post<AdminFilmFormData>(`${this.apiUrl}/film/aggiungi`, payload);
   }
 
   updateFilm(filmId: number, payload: AdminFilmSaveRequest): Observable<AdminFilmFormData> {
-    return this.http.put<AdminFilmFormData>(`${this.apiUrl}/film/modifica/${filmId}`, payload, { withCredentials: true });
+    return this.http.put<AdminFilmFormData>(`${this.apiUrl}/film/modifica/${filmId}`, payload);
   }
 
   deleteFilm(filmId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/film/elimina/${filmId}`, { withCredentials: true });
+    return this.http.delete<void>(`${this.apiUrl}/film/elimina/${filmId}`);
   }
 }

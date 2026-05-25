@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { adminAuthGuard } from './core/guard/admin-auth.guard';
+import { userAuthGuard } from './core/guard/user-auth.guard';
 
 export const routes: Routes = [
   {
@@ -34,6 +35,7 @@ export const routes: Routes = [
   },
   {
     path: 'ordini',
+    canActivate: [userAuthGuard],
     loadComponent: () => import('./pages/ordini/ordini.component').then((m) => m.OrdiniComponent)
   },
   {

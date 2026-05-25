@@ -30,15 +30,16 @@ public class AuthService {
 
     public LoginResult loginWithJwt(LoginRequest request) {
         LoginUser loginUser = validateUserCredentials(request);
+        String jwt = jwtService.createToken(loginUser.utente(), loginUser.ruolo());
         LoginResponse response = new LoginResponse(
             loginUser.utente().getId(),
             loginUser.utente().getNome(),
             loginUser.utente().getCognome(),
             loginUser.utente().getEmail(),
             loginUser.ruolo(),
-            "Login effettuato"
+            "Login effettuato",
+            jwt
         );
-        String jwt = jwtService.createToken(loginUser.utente(), loginUser.ruolo());
         return new LoginResult(response, jwt);
     }
 
@@ -57,6 +58,7 @@ public class AuthService {
         cliente.setPasswordHash(PASSWORD_ENCODER.encode(request.password()));
         cliente.setRuolo("USER");
         Cliente saved = clienteRepository.save(cliente);
+        String jwt = jwtService.createToken(saved, saved.getRuolo());
 
         LoginResponse response = new LoginResponse(
             saved.getId(),
@@ -64,9 +66,9 @@ public class AuthService {
             saved.getCognome(),
             saved.getEmail(),
             saved.getRuolo(),
-            "Registrazione completata"
+            "Registrazione completata",
+            jwt
         );
-        String jwt = jwtService.createToken(saved, saved.getRuolo());
         return new LoginResult(response, jwt);
     }
 

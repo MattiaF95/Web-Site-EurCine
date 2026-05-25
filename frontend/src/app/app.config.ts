@@ -5,7 +5,7 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { apiCacheInterceptor } from './core/interceptor/api-cache.interceptor';
-import { csrfInterceptor } from './core/interceptor/csrf.interceptor';
+import { authTokenInterceptor } from './core/interceptor/auth-token.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,6 +17,6 @@ export const appConfig: ApplicationConfig = {
       })
     ),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch(), withInterceptors([csrfInterceptor, apiCacheInterceptor]))
+    provideHttpClient(withFetch(), withInterceptors([authTokenInterceptor, apiCacheInterceptor]))
   ]
 };

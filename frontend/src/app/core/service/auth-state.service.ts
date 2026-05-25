@@ -2,13 +2,13 @@ import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core
 import { isPlatformBrowser } from '@angular/common';
 import { catchError, of } from 'rxjs';
 import { AuthService } from './auth.service';
+import { AuthTokenService } from './auth-token.service';
 import { AuthMeResponse, LoginResponse, AuthSession } from '../model/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStateService {
-  private static readonly SESSION_HINT_COOKIE = 'eurcine_session_present=1';
-
   private readonly authService = inject(AuthService);
+  private readonly authTokenService = inject(AuthTokenService);
   private readonly platformId = inject(PLATFORM_ID);
 
   private readonly sessionSignal = signal<AuthSession | null>(null);
@@ -24,8 +24,7 @@ export class AuthStateService {
       return;
     }
 
-    // Avoid /auth/me on public guest sessions; call it only when hint cookie exists.
-    if (!document.cookie.includes(AuthStateService.SESSION_HINT_COOKIE)) {
+    if (!this.authTokenService.getToken()) {
       return;
     }
 
@@ -43,6 +42,7 @@ export class AuthStateService {
   }
 
   setFromLogin(response: LoginResponse): void {
+    this.authTokenService.setToken(response.token);
     const session: AuthSession = {
       utenteId: response.utenteId,
       nome: response.nome,
@@ -67,6 +67,7 @@ export class AuthStateService {
 
   clearSession(): void {
     // Reset completo dello stato locale (sessione + banner).
+    this.authTokenService.clearToken();
     this.sessionSignal.set(null);
     this.showWelcomeSignal.set(false);
   }

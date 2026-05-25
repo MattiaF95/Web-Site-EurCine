@@ -153,19 +153,9 @@ export class App {
 
     this.authService.login({ email, password }).subscribe({
       next: (response) => {
-        this.authService.me().subscribe({
-          next: () => {
-            this.authState.setFromLogin(response);
-            this.loginLoading.set(false);
-            this.loginPassword.set('');
-          },
-          error: () => {
-            this.authState.clearSession();
-            this.loginLoading.set(false);
-            this.loginPassword.set('');
-            this.loginError.set('Login non completato: sessione non valida in produzione. Verifica cookie/CORS e riprova.');
-          }
-        });
+        this.authState.setFromLogin(response);
+        this.loginLoading.set(false);
+        this.loginPassword.set('');
       },
       error: (err: HttpErrorResponse) => {
         this.loginLoading.set(false);
