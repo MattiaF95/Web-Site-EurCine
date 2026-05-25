@@ -12,4 +12,8 @@ export class SaleService {
   getAll(): Observable<Sala[]> {
     return this.http.get<Sala[]>(this.apiUrl);
   }
+
+  getOne(nome: string): Observable<Sala> {
+    return this.http.get<Sala>(`${this.apiUrl}/${encodeURIComponent(nome)}`);
+  }
 }

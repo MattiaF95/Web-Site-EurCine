@@ -1,8 +1,16 @@
 <article class="showcase-card" [class.showcase-card--centered]="centered()" [class.showcase-card--large]="large()">
   <h3 class="showcase-card__title">{{ title() }}</h3>
 
+  @if (details().length > 0) {
+    <ul class="showcase-card__details">
+      @for (item of details(); track item.label) {
+        <li><strong>{{ item.label }}:</strong> {{ item.value }}</li>
+      }
+    </ul>
+  }
+
   @if (subtitle()) {
-    <p class="showcase-card__subtitle">{{ subtitle() }}</p>
+    <p class="showcase-card__subtitle showcase-card__subtitle--bottom">{{ subtitle() }}</p>
   }
 
   @if (date()) {

@@ -5,6 +5,11 @@ export interface ScheduleSlot {
   label: string;
 }
 
+export interface ShowcaseDetailItem {
+  label: string;
+  value: string;
+}
+
 @Component({
   selector: 'app-showcase-card',
   templateUrl: './showcase-card.component.html',
@@ -17,6 +22,7 @@ export class ShowcaseCardComponent {
   readonly date = input<string>('');
   readonly times = input<string>('');
   readonly lineTwo = input<string>('');
+  readonly details = input<ShowcaseDetailItem[]>([]);
   readonly slots = input<ScheduleSlot[]>([]);
   readonly centered = input<boolean>(false);
   readonly large = input<boolean>(false);

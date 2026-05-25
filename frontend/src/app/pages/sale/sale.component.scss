@@ -1,3 +1,29 @@
 .page-sale {
   background-image: url('/assets/images/sale-bg.avif');
 }
+
+.film-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.9rem;
+}
+
+.film-all-btn {
+  padding: 0.55rem 0.85rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(176, 203, 255, 0.42);
+  background: rgba(30, 69, 136, 0.48);
+  color: #edf5ff;
+  cursor: pointer;
+}
+
+.sale-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.sale-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.35);
+  filter: brightness(1.05);
+}

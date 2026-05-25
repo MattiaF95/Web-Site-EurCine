@@ -7,4 +7,10 @@ public interface SalaView {
     String getDescrizione();
 
     String getCaratteristicheNomi();
+
+    Long getPostiTotali();
+
+    Long getFileTotali();
+
+    String getSequenzaFile();
 }

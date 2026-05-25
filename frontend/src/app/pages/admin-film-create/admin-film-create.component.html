@@ -28,6 +28,11 @@
               }
             </select>
           </label>
+
+          <label class="admin-form-grid__full">
+            Trama
+            <textarea rows="5" [ngModel]="trama()" (ngModelChange)="trama.set($event)"></textarea>
+          </label>
         </div>
 
         <div class="admin-multi-select">

@@ -31,6 +31,23 @@
   font-size: 0.96rem;
 }
 
+.showcase-card__subtitle--bottom {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.showcase-card__details {
+  margin: 0.65rem 0 0;
+  padding-left: 1.1rem;
+  color: #dbe8ff;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.showcase-card__details li {
+  margin: 0.2rem 0;
+}
+
 .showcase-card__meta {
   margin: 0.72rem 0 0;
   line-height: 1.45;

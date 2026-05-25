@@ -1,0 +1,17 @@
+<div class="film-view-card">
+  <h2 class="film-view-card__title">{{ sala().nome }}</h2>
+  <p class="film-view-card__meta"><strong>Descrizione:</strong> {{ sala().descrizione || '-' }}</p>
+  <p class="film-view-card__meta"><strong>Caratteristiche:</strong></p>
+  @if (caratteristicheList().length > 0) {
+    <ul class="film-view-card__list">
+      @for (item of caratteristicheList(); track item) {
+        <li>{{ item }}</li>
+      }
+    </ul>
+  } @else {
+    <p class="film-view-card__meta">-</p>
+  }
+  <p class="film-view-card__meta"><strong>Posti totali:</strong> {{ sala().postiTotali }}</p>
+  <p class="film-view-card__meta"><strong>Totale file:</strong> {{ sala().fileTotali }}</p>
+  <p class="film-view-card__meta"><strong>Sequenza file:</strong> {{ sala().sequenzaFile || '-' }}</p>
+</div>

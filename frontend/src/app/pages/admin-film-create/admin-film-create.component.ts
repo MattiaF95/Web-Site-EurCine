@@ -19,6 +19,7 @@ export class AdminFilmCreateComponent {
   readonly titolo = signal('');
   readonly durataMin = signal<number | null>(null);
   readonly linguaId = signal<number | null>(null);
+  readonly trama = signal('');
   readonly selectedGenereIds = signal<number[]>([]);
   readonly genreMenuOpen = signal(false);
 
@@ -79,8 +80,8 @@ export class AdminFilmCreateComponent {
   }
 
   salva(): void {
-    if (!this.titolo().trim() || !this.durataMin() || !this.linguaId()) {
-      this.error.set('Compila titolo, durata e lingua.');
+    if (!this.titolo().trim() || !this.durataMin() || !this.linguaId() || !this.trama().trim()) {
+      this.error.set('Compila titolo, durata, lingua e trama.');
       return;
     }
 
@@ -93,6 +94,7 @@ export class AdminFilmCreateComponent {
         titolo: this.titolo().trim(),
         durataMin: this.durataMin() as number,
         linguaId: this.linguaId() as number,
+        trama: this.trama().trim(),
         genereIds: this.selectedGenereIds()
       })
       .subscribe({
@@ -102,6 +104,7 @@ export class AdminFilmCreateComponent {
           this.titolo.set('');
           this.durataMin.set(null);
           this.linguaId.set(null);
+          this.trama.set('');
           this.selectedGenereIds.set([]);
           this.closeGenreMenu();
         },

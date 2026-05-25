@@ -147,11 +147,18 @@ export class AdminFilmEditComponent {
     this.success.set('');
     this.saving.set(true);
 
+    if (!film.titolo.trim() || !film.durataMin || !film.linguaId || !film.trama.trim()) {
+      this.saving.set(false);
+      this.error.set('Compila titolo, durata, lingua e trama.');
+      return;
+    }
+
     this.filmManagementService
       .updateFilm(film.id, {
         titolo: film.titolo.trim(),
         durataMin: film.durataMin,
         linguaId: film.linguaId,
+        trama: film.trama.trim(),
         genereIds: film.genereIds
       })
       .subscribe({

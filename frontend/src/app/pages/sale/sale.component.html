@@ -7,10 +7,23 @@
       </p>
     </div>
 
-    @if (cards$ | async; as cards) {
+    @if (hasSelectedSala() && selectedSala(); as sala) {
+      <div class="film-actions">
+        <button type="button" class="film-all-btn" (click)="viewAll()">Visualizza tutte le sale</button>
+      </div>
+      <app-sala-view [sala]="sala" />
+    } @else {
       <div class="cards-grid cards-grid--sale">
-        @for (card of cards; track card.title) {
-          <app-showcase-card [title]="card.title" [subtitle]="card.subtitle" [centered]="true" [large]="true" />
+        @for (item of sale(); track item.nome) {
+          <div class="sale-card" (click)="openSala(item.nome)">
+            <app-showcase-card
+              [title]="item.nome"
+              [details]="buildCardDetails(item)"
+              [subtitle]="item.descrizione || 'Sala disponibile'"
+              [centered]="true"
+              [large]="true"
+            />
+          </div>
         }
       </div>
     }

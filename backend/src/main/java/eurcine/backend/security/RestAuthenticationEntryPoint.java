@@ -1,6 +1,7 @@
 package eurcine.backend.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,11 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private final ObjectMapper objectMapper;
-
-    public RestAuthenticationEntryPoint(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     @Override
     public void commence(

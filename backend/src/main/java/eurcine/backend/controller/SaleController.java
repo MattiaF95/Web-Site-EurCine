@@ -2,6 +2,7 @@ package eurcine.backend.controller;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import eurcine.backend.dto.SalaRecord;
@@ -20,5 +21,10 @@ public class SaleController {
     @GetMapping
     public List<SalaRecord> getAll() {
         return saleService.getAll();
+    }
+
+    @GetMapping("/{nome}")
+    public SalaRecord getOne(@PathVariable String nome) {
+        return saleService.getOne(nome);
     }
 }

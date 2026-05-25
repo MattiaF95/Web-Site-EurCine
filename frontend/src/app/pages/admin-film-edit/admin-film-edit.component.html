@@ -42,6 +42,11 @@
                 }
               </select>
             </label>
+
+            <label class="admin-form-grid__full">
+              Trama
+              <textarea rows="5" [ngModel]="film.trama" (ngModelChange)="updateField('trama', $event)"></textarea>
+            </label>
           </div>
 
           <div class="admin-multi-select">

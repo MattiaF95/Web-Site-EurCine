@@ -18,6 +18,7 @@ export interface AdminFilmFormData {
   titolo: string;
   durataMin: number;
   linguaId: number;
+  trama: string;
   genereIds: number[];
 }
 
@@ -25,6 +26,7 @@ export interface AdminFilmSaveRequest {
   titolo: string;
   durataMin: number;
   linguaId: number;
+  trama: string;
   genereIds: number[];
 }
 
