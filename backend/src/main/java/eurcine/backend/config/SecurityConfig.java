@@ -4,6 +4,7 @@ import eurcine.backend.security.CookieCsrfTokenResponseCookieBindingFilter;
 import eurcine.backend.security.JwtCookieAuthenticationFilter;
 import eurcine.backend.security.RestAccessDeniedHandler;
 import eurcine.backend.security.RestAuthenticationEntryPoint;
+import eurcine.backend.security.SpaCsrfTokenRequestHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -54,6 +55,7 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf
                 .csrfTokenRepository(csrfTokenRepository)
+                .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
                 .ignoringRequestMatchers("/api/auth/login")
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

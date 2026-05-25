@@ -133,9 +133,19 @@ export class App {
 
     this.authService.login({ email, password }).subscribe({
       next: (response) => {
-        this.authState.setFromLogin(response);
-        this.loginLoading.set(false);
-        this.loginPassword.set('');
+        this.authService.me().subscribe({
+          next: () => {
+            this.authState.setFromLogin(response);
+            this.loginLoading.set(false);
+            this.loginPassword.set('');
+          },
+          error: () => {
+            this.authState.setFromLogin(response);
+            this.loginLoading.set(false);
+            this.loginPassword.set('');
+            this.loginError.set('Login riuscito, ma inizializzazione CSRF non completata. Riprova l\'azione.');
+          }
+        });
       },
       error: (err: HttpErrorResponse) => {
         this.loginLoading.set(false);

@@ -45,7 +45,7 @@ public class AdminManagementController {
         return adminFilmManagementService.getMeta();
     }
 
-    @GetMapping("/film/{filmId}")
+    @GetMapping("/film/{filmId:\\d+}")
     public AdminFilmFormData getFilmById(@PathVariable Long filmId) {
         return adminFilmManagementService.getFilmById(filmId);
     }
