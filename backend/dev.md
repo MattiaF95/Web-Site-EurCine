@@ -253,6 +253,7 @@ Note:
 - `id`
 - `numero_ordine` (univoco)
 - `nome_cliente`
+- `utente_id` (fk -> Utente)
 - `totale`
 - `created_at`
 
@@ -289,6 +290,15 @@ Note:
 Note:
 - Estende `Utente`.
 - Tabella separata `admin` con campi specifici amministrativi.
+
+### Cliente
+
+- `id` (fk + pk verso `utente.id` con strategia JOINED)
+- `ruolo` (`USER`)
+
+Note:
+- Estende `Utente`.
+- Ogni ordine e nominativo e legato a un utente autenticato (`ordine.utente_id`).
 
 ### Altre migliorie logiche
 

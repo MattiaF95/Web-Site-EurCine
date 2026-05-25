@@ -1,0 +1,25 @@
+.ordini-card {
+  width: min(720px, 96vw);
+}
+
+.ordini-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.ordine-item {
+  border: 1px solid rgba(174, 202, 255, 0.35);
+  border-radius: 0.6rem;
+  background: rgba(11, 25, 52, 0.92);
+  padding: 0.75rem;
+}
+
+.ordine-item p {
+  margin: 0.2rem 0;
+}
+
+.ordine-link {
+  display: inline-block;
+  margin-top: 0.45rem;
+  color: #c9dbfa;
+}

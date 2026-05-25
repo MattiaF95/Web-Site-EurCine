@@ -1,7 +1,7 @@
 package eurcine.backend.dto;
 
 public record LoginResponse(
-    Long adminId,
+    Long utenteId,
     String nome,
     String cognome,
     String email,

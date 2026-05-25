@@ -17,6 +17,10 @@ export class OrdineService {
     return this.http.get<Ordine>(`${this.apiUrl}/${ordineId}`);
   }
 
+  getOrdini(): Observable<Ordine[]> {
+    return this.http.get<Ordine[]>(this.apiUrl);
+  }
+
   getBiglietti(ordineId: number): Observable<Biglietto[]> {
     return this.http.get<Biglietto[]>(`${this.apiUrl}/${ordineId}/biglietti`);
   }

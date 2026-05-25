@@ -1,0 +1,10 @@
+package eurcine.backend.repository;
+
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import eurcine.backend.model.Cliente;
+
+public interface ClienteRepository extends JpaRepository<Cliente, Long> {
+
+    Optional<Cliente> findByEmailIgnoreCase(String email);
+}

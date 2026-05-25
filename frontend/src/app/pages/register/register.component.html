@@ -1,0 +1,23 @@
+<section class="page page-register">
+  <div class="page__content">
+    <div class="data-card data-card--centered register-card">
+      <h1>Registrazione</h1>
+      <p class="register-subtitle">Crea il tuo account per prenotare i biglietti.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="register-form" novalidate>
+        <input class="register-field" type="text" placeholder="Nome" formControlName="nome" />
+        <input class="register-field" type="text" placeholder="Cognome" formControlName="cognome" />
+        <input class="register-field" type="email" placeholder="Email" formControlName="email" />
+        <input class="register-field" type="password" placeholder="Password" formControlName="password" />
+
+        <button class="register-btn" type="submit" [disabled]="loading()">
+          {{ loading() ? 'Registrazione...' : 'Registrati' }}
+        </button>
+      </form>
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+    </div>
+  </div>
+</section>

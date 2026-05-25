@@ -1,0 +1,43 @@
+.register-card {
+  width: min(460px, 94vw);
+  border: 1px solid rgba(174, 202, 255, 0.35);
+  background: rgba(8, 21, 45, 0.96);
+}
+
+.register-subtitle {
+  margin: 0 0 1rem;
+  color: #c9dbfa;
+}
+
+.register-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.register-field {
+  width: 100%;
+  border-radius: 0.52rem;
+  border: 1px solid rgba(174, 202, 255, 0.35);
+  background: rgba(11, 25, 52, 0.92);
+  color: #eef5ff;
+  padding: 0.62rem 0.64rem;
+}
+
+.register-btn {
+  border-radius: 0.52rem;
+  border: 1px solid rgba(174, 202, 255, 0.35);
+  background: rgba(30, 69, 136, 0.6);
+  color: #eef5ff;
+  padding: 0.58rem 0.64rem;
+  cursor: pointer;
+}
+
+.register-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #ffd0d0;
+  margin: 0.4rem 0 0;
+}

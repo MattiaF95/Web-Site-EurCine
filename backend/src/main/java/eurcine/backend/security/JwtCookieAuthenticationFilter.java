@@ -36,7 +36,7 @@ public class JwtCookieAuthenticationFilter extends OncePerRequestFilter {
             String token = readSessionToken(request);
             if (token != null && !token.isBlank()) {
                 try {
-                    JwtService.AdminPrincipal principal = jwtService.parseToken(token);
+                    JwtService.UserPrincipal principal = jwtService.parseToken(token);
                     List<GrantedAuthority> authorities = mapAuthorities(principal.getRuolo());
                     UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(principal, null, authorities);

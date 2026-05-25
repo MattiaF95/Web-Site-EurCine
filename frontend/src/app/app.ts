@@ -93,6 +93,26 @@ export class App {
     void this.router.navigate(['/home']);
   }
 
+  goToRegister(): void {
+    this.mobileNavOpen.set(false);
+    this.profileOpen.set(false);
+    void this.router.navigate(['/registrati']);
+  }
+
+  goToOrdini(): void {
+    this.mobileNavOpen.set(false);
+    this.profileOpen.set(false);
+    void this.router.navigate(['/ordini']);
+  }
+
+  isAdminRole(ruolo?: string): boolean {
+    if (!ruolo) {
+      return false;
+    }
+    const normalized = ruolo.toUpperCase();
+    return normalized === 'ADMIN' || normalized === 'SUPER_ADMIN';
+  }
+
   onPageClick(event: MouseEvent): void {
     const target = event.target as HTMLElement | null;
 

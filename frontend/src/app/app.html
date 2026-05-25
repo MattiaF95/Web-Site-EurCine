@@ -51,7 +51,7 @@
             <button type="button" class="profile-menu__icon" (click)="toggleProfile()" aria-label="Login">🔐</button>
             @if (profileOpen()) {
               <div class="profile-menu__panel">
-                <p class="profile-menu__name">Accesso Admin</p>
+                <p class="profile-menu__name">Accesso</p>
                 <input
                   class="profile-menu__input"
                   type="email"
@@ -70,6 +70,9 @@
                 <button type="button" class="profile-menu__action" (click)="submitLogin()" [disabled]="loginLoading()">
                   {{ loginLoading() ? 'Accesso...' : 'Accedi' }}
                 </button>
+                <a class="profile-menu__action profile-menu__action--link" routerLink="/registrati" (click)="profileOpen.set(false)">
+                  Registrati
+                </a>
                 @if (loginError()) {
                   <p class="profile-menu__error">{{ loginError() }}</p>
                 }
@@ -88,8 +91,11 @@
                   <p class="profile-menu__role">{{ user.ruolo }}</p>
                   <p class="profile-menu__email">{{ user.email }}</p>
                 }
-                <button type="button" class="profile-menu__action" (click)="goToManageFilm()">Gestisci film</button>
-                <button type="button" class="profile-menu__action" (click)="goToManageProgrammazione()">Gestisci programmazione</button>
+                @if (isAdminRole(user.ruolo)) {
+                  <button type="button" class="profile-menu__action" (click)="goToManageFilm()">Gestisci film</button>
+                  <button type="button" class="profile-menu__action" (click)="goToManageProgrammazione()">Gestisci programmazione</button>
+                }
+                <button type="button" class="profile-menu__action" (click)="goToOrdini()">Ordini</button>
                 <button type="button" class="profile-menu__action profile-menu__action--logout" (click)="logout()">Logout</button>
               </div>
             }

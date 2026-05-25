@@ -1,6 +1,6 @@
 package eurcine.backend.service;
 
-import eurcine.backend.model.Admin;
+import eurcine.backend.model.Utente;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.JwtException;
@@ -31,30 +31,30 @@ public class JwtService {
         this.expirationDays = expirationDays;
     }
 
-    public String createToken(Admin admin) {
+    public String createToken(Utente utente, String ruolo) {
         Instant now = Instant.now();
         Instant exp = now.plus(expirationDays, ChronoUnit.DAYS);
 
         return Jwts.builder()
-            .subject(String.valueOf(admin.getId()))
+            .subject(String.valueOf(utente.getId()))
             .issuedAt(Date.from(now))
             .expiration(Date.from(exp))
-            .claim("nome", admin.getNome())
-            .claim("cognome", admin.getCognome())
-            .claim("email", admin.getEmail())
-            .claim("ruolo", admin.getRuolo())
+            .claim("nome", utente.getNome())
+            .claim("cognome", utente.getCognome())
+            .claim("email", utente.getEmail())
+            .claim("ruolo", ruolo)
             .signWith(key)
             .compact();
     }
 
-    public AdminPrincipal parseToken(String token) {
+    public UserPrincipal parseToken(String token) {
         if (token == null || token.isBlank()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sessione non presente.");
         }
 
         try {
             Claims claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
-            Long adminId = Long.valueOf(claims.getSubject());
+            Long utenteId = Long.valueOf(claims.getSubject());
             String nome = claims.get("nome", String.class);
             String cognome = claims.get("cognome", String.class);
             String email = claims.get("email", String.class);
@@ -63,20 +63,20 @@ public class JwtService {
             if (nome == null || cognome == null || email == null || ruolo == null) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token non valido.");
             }
-            return new AdminPrincipal(adminId, nome, cognome, email, ruolo);
+            return new UserPrincipal(utenteId, nome, cognome, email, ruolo);
         } catch (JwtException | IllegalArgumentException ex) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token non valido.");
         }
     }
 
-    public static final class AdminPrincipal {
+    public static final class UserPrincipal {
         private final Long id;
         private final String nome;
         private final String cognome;
         private final String email;
         private final String ruolo;
 
-        public AdminPrincipal(Long id, String nome, String cognome, String email, String ruolo) {
+        public UserPrincipal(Long id, String nome, String cognome, String email, String ruolo) {
             this.id = id;
             this.nome = nome;
             this.cognome = cognome;

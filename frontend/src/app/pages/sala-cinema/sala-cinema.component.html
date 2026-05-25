@@ -48,19 +48,24 @@
       </div>
 
       <div class="order-actions">
-        @if (!showCustomerInput()) {
+        @if (!showOrderSummary()) {
           <button type="button" class="order-btn" [disabled]="selectedCount() === 0" (click)="onPrenotaClick()">
             PRENOTA BIGLIETTI
           </button>
+          @if (authRequiredMessage()) {
+            <p class="order-auth-message">{{ authRequiredMessage() }}</p>
+          }
         } @else {
-          <input
-            type="text"
-            class="customer-input"
-            placeholder="Nome cliente"
-            [ngModel]="customerName()"
-            (ngModelChange)="customerName.set($event)"
-          />
-          <button type="button" class="order-btn" [disabled]="!customerName().trim()" (click)="onConfermaOrdine()">
+          <div class="order-summary">
+            <p><strong>Film:</strong> {{ seatMap.filmTitolo }}</p>
+            <p><strong>Sala:</strong> {{ seatMap.salaNome }}</p>
+            <p><strong>Orario:</strong> {{ seatMap.startAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+            <p><strong>Posti:</strong> {{ getSelectedSeatLabels(seatMap.righe).join(', ') }}</p>
+            @if (session(); as user) {
+              <p><strong>Cliente:</strong> {{ user.nome }} {{ user.cognome }} ({{ user.email }})</p>
+            }
+          </div>
+          <button type="button" class="order-btn" (click)="onConfermaOrdine()">
             CONFERMA ORDINE
           </button>
         }

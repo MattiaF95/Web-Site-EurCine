@@ -25,8 +25,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/sala-cinema/sala-cinema.component').then((m) => m.SalaCinemaComponent)
   },
   {
+    path: 'registrati',
+    loadComponent: () => import('./pages/register/register.component').then((m) => m.RegisterComponent)
+  },
+  {
     path: 'ticket-show/:ordineId',
     loadComponent: () => import('./pages/ticket-show/ticket-show.component').then((m) => m.TicketShowComponent)
+  },
+  {
+    path: 'ordini',
+    loadComponent: () => import('./pages/ordini/ordini.component').then((m) => m.OrdiniComponent)
   },
   {
     path: 'film',

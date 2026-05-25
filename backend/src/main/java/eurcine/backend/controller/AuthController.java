@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import eurcine.backend.dto.AuthMeResponse;
 import eurcine.backend.dto.LoginRequest;
 import eurcine.backend.dto.LoginResponse;
+import eurcine.backend.dto.RegisterRequest;
 import eurcine.backend.service.AuthService;
 import eurcine.backend.service.JwtService;
 
@@ -33,30 +34,20 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request, HttpServletResponse response) {
         AuthService.LoginResult loginResult = authService.loginWithJwt(request);
-        boolean production = isProduction();
-
-        ResponseCookie cookie = ResponseCookie.from(SESSION_COOKIE_NAME, loginResult.jwtToken())
-            .httpOnly(true)
-            .secure(production)
-            .path("/")
-            .maxAge(7 * 24 * 60 * 60)
-            .sameSite(production ? "None" : "Lax")
-            .build();
-        ResponseCookie hintCookie = ResponseCookie.from(SESSION_HINT_COOKIE_NAME, "1")
-            .httpOnly(false)
-            .secure(production)
-            .path("/")
-            .maxAge(7 * 24 * 60 * 60)
-            .sameSite(production ? "None" : "Lax")
-            .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, hintCookie.toString());
+        applySessionCookies(response, loginResult.jwtToken());
         return loginResult.response();
     }
 
+    @PostMapping("/register")
+    public LoginResponse register(@RequestBody RegisterRequest request, HttpServletResponse response) {
+        AuthService.LoginResult registerResult = authService.registerWithJwt(request);
+        applySessionCookies(response, registerResult.jwtToken());
+        return registerResult.response();
+    }
+
     @GetMapping("/me")
-    public AuthMeResponse me(@AuthenticationPrincipal JwtService.AdminPrincipal admin) {
-        return authService.me(admin);
+    public AuthMeResponse me(@AuthenticationPrincipal JwtService.UserPrincipal user) {
+        return authService.me(user);
     }
 
     @PostMapping("/logout")
@@ -74,6 +65,26 @@ public class AuthController {
             .secure(production)
             .path("/")
             .maxAge(0)
+            .sameSite(production ? "None" : "Lax")
+            .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, hintCookie.toString());
+    }
+
+    private void applySessionCookies(HttpServletResponse response, String jwtToken) {
+        boolean production = isProduction();
+        ResponseCookie cookie = ResponseCookie.from(SESSION_COOKIE_NAME, jwtToken)
+            .httpOnly(true)
+            .secure(production)
+            .path("/")
+            .maxAge(7 * 24 * 60 * 60)
+            .sameSite(production ? "None" : "Lax")
+            .build();
+        ResponseCookie hintCookie = ResponseCookie.from(SESSION_HINT_COOKIE_NAME, "1")
+            .httpOnly(false)
+            .secure(production)
+            .path("/")
+            .maxAge(7 * 24 * 60 * 60)
             .sameSite(production ? "None" : "Lax")
             .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());

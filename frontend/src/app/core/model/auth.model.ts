@@ -4,7 +4,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  adminId: number;
+  utenteId: number;
   nome: string;
   cognome: string;
   email: string;
@@ -13,7 +13,7 @@ export interface LoginResponse {
 }
 
 export interface AuthMeResponse {
-  adminId: number;
+  utenteId: number;
   nome: string;
   cognome: string;
   email: string;
@@ -22,3 +22,10 @@ export interface AuthMeResponse {
 }
 
 export type AuthSession = AuthMeResponse;
+
+export interface RegisterRequest {
+  nome: string;
+  cognome: string;
+  email: string;
+  password: string;
+}

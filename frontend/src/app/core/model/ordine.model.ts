@@ -19,7 +19,6 @@ export interface Ordine {
 }
 
 export interface CreateOrdineRequest {
-  nomeCliente: string;
   programmazioneId: number;
   postoIds: number[];
 }

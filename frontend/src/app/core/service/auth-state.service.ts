@@ -44,7 +44,7 @@ export class AuthStateService {
 
   setFromLogin(response: LoginResponse): void {
     const session: AuthSession = {
-      adminId: response.adminId,
+      utenteId: response.utenteId,
       nome: response.nome,
       cognome: response.cognome,
       email: response.email,
@@ -83,7 +83,7 @@ export class AuthStateService {
 
   private toSession(me: AuthMeResponse): AuthSession {
     return {
-      adminId: me.adminId,
+      utenteId: me.utenteId,
       nome: me.nome,
       cognome: me.cognome,
       email: me.email,

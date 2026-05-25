@@ -19,13 +19,13 @@ export const adminAuthGuard: CanActivateFn = () => {
   // If login state is already available in-memory, avoid forcing a network check
   // on every admin navigation to prevent false logouts on transient failures.
   if (authState.isLoggedIn()) {
-    return of(true);
+    return of(isAdminRole(authState.session()?.ruolo) ? true : router.createUrlTree(['/home']));
   }
 
   return authService.me().pipe(
     map((me) => {
       authState.setFromMe(me);
-      return true;
+      return isAdminRole(me.ruolo) ? true : router.createUrlTree(['/home']);
     }),
     catchError(() => {
       authState.clearSession();
@@ -33,3 +33,10 @@ export const adminAuthGuard: CanActivateFn = () => {
     })
   );
 };
+  const isAdminRole = (ruolo?: string): boolean => {
+    if (!ruolo) {
+      return false;
+    }
+    const normalized = ruolo.toUpperCase();
+    return normalized === 'ADMIN' || normalized === 'SUPER_ADMIN';
+  };

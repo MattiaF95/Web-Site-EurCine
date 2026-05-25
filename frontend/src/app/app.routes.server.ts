@@ -34,7 +34,15 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server
   },
   {
+    path: 'registrati',
+    renderMode: RenderMode.Server
+  },
+  {
     path: 'ticket-show/:ordineId',
+    renderMode: RenderMode.Server
+  },
+  {
+    path: 'ordini',
     renderMode: RenderMode.Server
   },
   {

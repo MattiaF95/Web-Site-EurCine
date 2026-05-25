@@ -2,9 +2,13 @@ package eurcine.backend.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
@@ -32,6 +36,11 @@ public class Ordine {
     @NotBlank
     @Column(name = "nome_cliente", nullable = false, length = 128)
     private String nomeCliente;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "utente_id", nullable = false, foreignKey = @ForeignKey(name = "fk_ordine_utente"))
+    private Utente utente;
 
     @NotNull
     @DecimalMin(value = "0.00")

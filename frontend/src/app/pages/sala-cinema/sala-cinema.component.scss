@@ -127,13 +127,21 @@
   justify-content: center;
 }
 
-.customer-input {
-  width: min(340px, 80vw);
-  padding: 0.55rem 0.75rem;
+.order-auth-message {
+  margin: 0;
+  color: #fecaca;
+}
+
+.order-summary {
+  width: min(520px, 92vw);
+  padding: 0.9rem;
   border-radius: 0.6rem;
   border: 1px solid rgba(180, 204, 255, 0.35);
   background: rgba(8, 19, 42, 0.74);
-  color: #e8f1ff;
+}
+
+.order-summary p {
+  margin: 0.18rem 0;
 }
 
 .order-btn {
@@ -217,7 +225,7 @@
     gap: 0.55rem;
   }
 
-  .customer-input {
-    width: min(340px, 92vw);
+  .order-summary {
+    width: min(520px, 96vw);
   }
 }
