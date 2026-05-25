@@ -7,8 +7,7 @@
       </div>
 
       <div class="order-card">
-        <p><strong>ID Ordine:</strong> {{ ordine.ordineId }}</p>
-        <p><strong>Numero Ordine:</strong> {{ ordine.numeroOrdine }}</p>
+        <p><strong>Codice Ordine:</strong> {{ ordine.numeroOrdine }}</p>
         <p><strong>Cliente:</strong> {{ ordine.nomeCliente }}</p>
         <p><strong>Data:</strong> {{ ordine.createdAt | date: 'dd/MM/yyyy HH:mm' }}</p>
         <p><strong>Totale:</strong> {{ ordine.totale | currency: 'EUR' }}</p>
@@ -45,7 +44,7 @@
       </div>
 
       <div class="order-actions">
-        <button type="button" class="order-btn" (click)="scaricaBiglietti(ordine.ordineId)">SCARICA BIGLIETTI</button>
+        <button type="button" class="order-btn" (click)="scaricaBiglietti(ordine.numeroOrdine)">SCARICA BIGLIETTI</button>
       </div>
     }
   </div>

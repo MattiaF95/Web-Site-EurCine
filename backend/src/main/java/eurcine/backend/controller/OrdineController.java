@@ -37,16 +37,19 @@ public class OrdineController {
         return ordineService.createOrdine(request, user);
     }
 
-    @GetMapping("/{ordineId}")
-    public OrdineRecord get(@PathVariable Long ordineId, @AuthenticationPrincipal JwtService.UserPrincipal user) {
-        return ordineService.getOrdine(ordineId, user);
-    }
-
-    @GetMapping("/{ordineId}/biglietti")
-    public List<BigliettoRecord> getTickets(
-        @PathVariable Long ordineId,
+    @GetMapping("/codice/{numeroOrdine}")
+    public OrdineRecord getByNumeroOrdine(
+        @PathVariable String numeroOrdine,
         @AuthenticationPrincipal JwtService.UserPrincipal user
     ) {
-        return ordineService.getBiglietti(ordineId, user);
+        return ordineService.getOrdineByNumeroOrdine(numeroOrdine, user);
+    }
+
+    @GetMapping("/codice/{numeroOrdine}/biglietti")
+    public List<BigliettoRecord> getTicketsByNumeroOrdine(
+        @PathVariable String numeroOrdine,
+        @AuthenticationPrincipal JwtService.UserPrincipal user
+    ) {
+        return ordineService.getBigliettiByNumeroOrdine(numeroOrdine, user);
     }
 }

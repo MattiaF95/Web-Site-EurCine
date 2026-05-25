@@ -11,6 +11,7 @@ public interface OrdineRepository extends JpaRepository<Ordine, Long> {
 
     Optional<Ordine> findByNumeroOrdine(String numeroOrdine);
     Optional<Ordine> findByIdAndUtenteId(Long id, Long utenteId);
+    Optional<Ordine> findByNumeroOrdineAndUtenteId(String numeroOrdine, Long utenteId);
     List<Ordine> findAllByUtenteIdOrderByCreatedAtDesc(Long utenteId);
     List<Ordine> findAllByOrderByCreatedAtDesc();
 

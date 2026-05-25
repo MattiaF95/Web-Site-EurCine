@@ -89,7 +89,7 @@ export class SalaCinemaComponent {
       }).subscribe((ordine) => {
         this.selectedSeatIds.set(new Set());
         this.showOrderSummary.set(false);
-        void this.router.navigate(['/ticket-show', ordine.ordineId]);
+        void this.router.navigate(['/ticket-show', ordine.numeroOrdine]);
       });
     });
   }

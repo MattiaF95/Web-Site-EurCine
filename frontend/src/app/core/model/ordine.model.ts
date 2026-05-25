@@ -10,7 +10,6 @@ export interface Biglietto {
 }
 
 export interface Ordine {
-  ordineId: number;
   numeroOrdine: string;
   nomeCliente: string;
   totale: number;

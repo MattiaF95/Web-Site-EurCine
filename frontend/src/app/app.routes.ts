@@ -29,7 +29,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/register/register.component').then((m) => m.RegisterComponent)
   },
   {
-    path: 'ticket-show/:ordineId',
+    path: 'ticket-show/:numeroOrdine',
     loadComponent: () => import('./pages/ticket-show/ticket-show.component').then((m) => m.TicketShowComponent)
   },
   {

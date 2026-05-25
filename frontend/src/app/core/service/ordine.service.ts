@@ -13,15 +13,15 @@ export class OrdineService {
     return this.http.post<Ordine>(this.apiUrl, request);
   }
 
-  getOrdine(ordineId: number): Observable<Ordine> {
-    return this.http.get<Ordine>(`${this.apiUrl}/${ordineId}`);
+  getOrdine(numeroOrdine: string): Observable<Ordine> {
+    return this.http.get<Ordine>(`${this.apiUrl}/codice/${encodeURIComponent(numeroOrdine)}`);
   }
 
   getOrdini(): Observable<Ordine[]> {
     return this.http.get<Ordine[]>(this.apiUrl);
   }
 
-  getBiglietti(ordineId: number): Observable<Biglietto[]> {
-    return this.http.get<Biglietto[]>(`${this.apiUrl}/${ordineId}/biglietti`);
+  getBiglietti(numeroOrdine: string): Observable<Biglietto[]> {
+    return this.http.get<Biglietto[]>(`${this.apiUrl}/codice/${encodeURIComponent(numeroOrdine)}/biglietti`);
   }
 }

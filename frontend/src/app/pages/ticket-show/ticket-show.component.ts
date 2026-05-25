@@ -16,12 +16,12 @@ export class TicketShowComponent {
   private readonly ordineService = inject(OrdineService);
 
   readonly ordine$ = this.route.paramMap.pipe(
-    map((params) => Number(params.get('ordineId'))),
-    switchMap((ordineId) => this.ordineService.getOrdine(ordineId))
+    map((params) => params.get('numeroOrdine') ?? ''),
+    switchMap((numeroOrdine) => this.ordineService.getOrdine(numeroOrdine))
   );
 
-  scaricaBiglietti(ordineId: number): void {
-    this.ordineService.getBiglietti(ordineId).subscribe((tickets) => {
+  scaricaBiglietti(numeroOrdine: string): void {
+    this.ordineService.getBiglietti(numeroOrdine).subscribe((tickets) => {
       const content = tickets
         .map((t) => `${t.bigliettoId};${t.filmTitolo};${t.salaNome};${t.startAt};${t.fila}${t.postoNumero};${t.prezzo}`)
         .join('\n');
@@ -30,7 +30,7 @@ export class TicketShowComponent {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `biglietti-ordine-${ordineId}.txt`;
+      a.download = `biglietti-ordine-${numeroOrdine}.txt`;
       a.click();
       URL.revokeObjectURL(url);
     });

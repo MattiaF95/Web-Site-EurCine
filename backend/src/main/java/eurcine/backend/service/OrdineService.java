@@ -111,16 +111,16 @@ public class OrdineService {
         return toOrdineRecord(ordine, saved);
     }
 
-    public OrdineRecord getOrdine(Long ordineId, JwtService.UserPrincipal user) {
-        Ordine ordine = findAuthorizedOrder(ordineId, user);
-        List<Biglietto> biglietti = bigliettoRepository.findByOrdineId(ordineId);
+    public OrdineRecord getOrdineByNumeroOrdine(String numeroOrdine, JwtService.UserPrincipal user) {
+        Ordine ordine = findAuthorizedOrderByNumeroOrdine(numeroOrdine, user);
+        List<Biglietto> biglietti = bigliettoRepository.findByOrdineId(ordine.getId());
         return toOrdineRecord(ordine, biglietti);
     }
 
-    public List<BigliettoRecord> getBiglietti(Long ordineId, JwtService.UserPrincipal user) {
-        findAuthorizedOrder(ordineId, user);
+    public List<BigliettoRecord> getBigliettiByNumeroOrdine(String numeroOrdine, JwtService.UserPrincipal user) {
+        Ordine ordine = findAuthorizedOrderByNumeroOrdine(numeroOrdine, user);
 
-        return bigliettoRepository.findByOrdineId(ordineId).stream()
+        return bigliettoRepository.findByOrdineId(ordine.getId()).stream()
             .map(this::toBigliettoRecord)
             .toList();
     }
@@ -139,17 +139,20 @@ public class OrdineService {
             .toList();
     }
 
-    private Ordine findAuthorizedOrder(Long ordineId, JwtService.UserPrincipal user) {
+    private Ordine findAuthorizedOrderByNumeroOrdine(String numeroOrdine, JwtService.UserPrincipal user) {
         if (user == null || user.getId() == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Autenticazione richiesta.");
         }
+        if (numeroOrdine == null || numeroOrdine.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Numero ordine obbligatorio.");
+        }
 
         if (isAdminRole(user.getRuolo())) {
-            return ordineRepository.findById(ordineId)
+            return ordineRepository.findByNumeroOrdine(numeroOrdine)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ordine non trovato."));
         }
 
-        return ordineRepository.findByIdAndUtenteId(ordineId, user.getId())
+        return ordineRepository.findByNumeroOrdineAndUtenteId(numeroOrdine, user.getId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Ordine non accessibile."));
     }
 
@@ -164,7 +167,6 @@ public class OrdineService {
     private OrdineRecord toOrdineRecord(Ordine ordine, List<Biglietto> biglietti) {
         List<BigliettoRecord> bigliettiDto = biglietti.stream().map(this::toBigliettoRecord).toList();
         return new OrdineRecord(
-            ordine.getId(),
             ordine.getNumeroOrdine(),
             ordine.getNomeCliente(),
             ordine.getTotale(),
