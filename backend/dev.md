@@ -80,6 +80,50 @@
     - File: 10 (da A a L)
     - Posti per fila: 8
 
+### Caratteristiche sala
+
+- Video
+  - Proiezione Laser 4K
+  - Proiezione Laser RGB
+  - Schermo IMAX
+  - Schermo curvo
+  - Schermo Silver Screen (3D)
+  - Tecnologia HFR (High Frame Rate)
+  - Tecnologia ScreenX (270 gradi)
+  - Tecnologia Dolby Vision
+  - Proiezione RealD 3D
+- Audio
+  - Dolby Atmos
+  - DTS:X
+  - Auro 3D
+  - Surround 7.1
+  - Surround 5.1
+  - Certificazione THX
+  - Isolamento acustico attivo
+  - Pannelli fonoassorbenti geometrici
+- Comfort e Sedute
+  - Poltrone VIP Recliner (elettriche)
+  - Love Seats (divanetti per coppie)
+  - Disposizione Stadium Seating (gradinata)
+  - Sedili riscaldati
+  - Portabicchieri refrigerati
+  - Tavolino estraibile integrato
+  - Porte USB di ricarica
+- Effetti Dinamici
+  - Sedili mobili 4DX
+  - Sedili vibranti D-Box
+  - Effetti vento in sala
+  - Effetti acqua e pioggia
+  - Effetti nebbia e fumo
+  - Effetti lampi e stroboscopici
+  - Emettitori di fragranze olfattive
+- Servizi e Accessibilita
+  - Ordinazione cibo via App al posto
+  - Pulsante chiamata cameriere
+  - Posti dedicati disabilita motorie
+  - Cuffie per audiodescrizione
+  - Dispositivi sottotitoli per non udenti
+
 ### Programmazione
 
 Esempio un giorno.
@@ -132,6 +176,7 @@ Entita utenti: `Utente` (astratta), `Admin` (estende `Utente`).
 - `titolo`
 - `durata_min`
 - `lingua_id` (fk -> Lingua)
+- `trama`
 
 Note:
 - Un film puo avere piu generi, quindi non usare `genere_id` diretto su Film.
@@ -158,6 +203,18 @@ Vincolo:
 
 - `id`
 - `nome`
+- `descrizione`
+
+### Caratteristiche_sala
+
+- `id`
+- `categoria`
+- `caratteristica`
+
+### Sala_caratteristica (tabella ponte)
+
+- `sala_id` (fk -> Sala)
+- `caratteristica_sala_id` (fk -> Caratteristiche_sala)
 
 ### Fila
 

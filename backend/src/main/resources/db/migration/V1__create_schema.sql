@@ -13,7 +13,25 @@ CREATE TABLE IF NOT EXISTS genere (
 CREATE TABLE IF NOT EXISTS sala (
   id BIGINT NOT NULL AUTO_INCREMENT,
   nome VARCHAR(64) NOT NULL,
+  descrizione VARCHAR(255) NULL,
   PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS caratteristica_sala (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  categoria VARCHAR(64) NOT NULL,
+  caratteristica VARCHAR(128) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_caratteristica_categoria_nome (categoria, caratteristica)
+);
+
+CREATE TABLE IF NOT EXISTS sala_caratteristica (
+  sala_id BIGINT NOT NULL,
+  caratteristica_sala_id BIGINT NOT NULL,
+  PRIMARY KEY (sala_id, caratteristica_sala_id),
+  KEY idx_sala_caratteristica_caratteristica_id (caratteristica_sala_id),
+  CONSTRAINT fk_sala_caratteristica_sala FOREIGN KEY (sala_id) REFERENCES sala (id),
+  CONSTRAINT fk_sala_caratteristica_caratteristica FOREIGN KEY (caratteristica_sala_id) REFERENCES caratteristica_sala (id)
 );
 
 CREATE TABLE IF NOT EXISTS utente (
@@ -39,6 +57,7 @@ CREATE TABLE IF NOT EXISTS film (
   titolo VARCHAR(255) NOT NULL,
   durata_min INT NOT NULL,
   lingua_id BIGINT NOT NULL,
+  trama TEXT NULL,
   PRIMARY KEY (id),
   KEY idx_film_lingua_id (lingua_id),
   CONSTRAINT fk_film_lingua FOREIGN KEY (lingua_id) REFERENCES lingua (id)
