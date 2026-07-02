@@ -349,3 +349,7 @@ Web-Site-EurCine/
     </td>
   </tr>
 </table>
+
+## Crediti
+
+- Test, note e raccolta risultati: [@MattiaF95](https://github.com/MattiaF95)
