@@ -5,7 +5,8 @@ Progetto creato **per divertimento** e per testare concretamente l'uso di agenti
 Il risultato? Il sito completo è stato realizzato in **2/3 giorni**, poi rifinito e stabilizzato dopo il primo deploy. Un esperimento riuscito, e pure divertente.
 
 🔗 **Live:** [https://web-site-eurcine-1.onrender.com/home](https://web-site-eurcine-1.onrender.com/home)
-
+⏱️ **Nota:** il sito gira su Render con piano gratuito e sia il backend che il DB vanno in **cold start**. Se è la prima visita dopo un periodo di inattività, backend e database devono avviarsi.
+Attendere **4/5 minuti** prima che tutto sia operativo.
 ---
 
 ## 🧱 Stack Tecnologico
