@@ -1,6 +1,7 @@
 package eurcine.backend.controller;
 
 import java.util.List;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +32,7 @@ public class OrdineController {
 
     @PostMapping
     public OrdineRecord create(
-        @RequestBody CreateOrdineRequest request,
+        @Valid @RequestBody CreateOrdineRequest request,
         @AuthenticationPrincipal JwtService.UserPrincipal user
     ) {
         return ordineService.createOrdine(request, user);

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 import eurcine.backend.dto.AuthMeResponse;
 import eurcine.backend.dto.LoginRequest;
 import eurcine.backend.dto.LoginResponse;
@@ -24,13 +25,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         AuthService.LoginResult loginResult = authService.loginWithJwt(request);
         return loginResult.response();
     }
 
     @PostMapping("/register")
-    public LoginResponse register(@RequestBody RegisterRequest request) {
+    public LoginResponse register(@Valid @RequestBody RegisterRequest request) {
         AuthService.LoginResult registerResult = authService.registerWithJwt(request);
         return registerResult.response();
     }

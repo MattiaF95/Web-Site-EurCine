@@ -10,6 +10,7 @@ import eurcine.backend.dto.AdminProgrammazioneCatalogResponse;
 import eurcine.backend.dto.AdminProgrammazioneCreatedItem;
 import eurcine.backend.service.AdminFilmManagementService;
 import eurcine.backend.service.AdminProgrammazioneManagementService;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,14 +52,14 @@ public class AdminManagementController {
     }
 
     @PostMapping("/film/aggiungi")
-    public AdminFilmFormData createFilm(@RequestBody AdminFilmSaveRequest request) {
+    public AdminFilmFormData createFilm(@Valid @RequestBody AdminFilmSaveRequest request) {
         return adminFilmManagementService.createFilm(request);
     }
 
     @PutMapping("/film/modifica/{filmId}")
     public AdminFilmFormData updateFilm(
         @PathVariable Long filmId,
-        @RequestBody AdminFilmSaveRequest request
+        @Valid @RequestBody AdminFilmSaveRequest request
     ) {
         return adminFilmManagementService.updateFilm(filmId, request);
     }
@@ -75,7 +76,7 @@ public class AdminManagementController {
 
     @PostMapping("/programmazione/aggiungi")
     public AdminProgrammazioneBatchCreateResponse createProgrammazioni(
-        @RequestBody AdminProgrammazioneBatchCreateRequest request
+        @Valid @RequestBody AdminProgrammazioneBatchCreateRequest request
     ) {
         return adminProgrammazioneManagementService.createProgrammazioni(request);
     }

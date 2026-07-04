@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import eurcine.backend.dto.SeatDto;
 import eurcine.backend.dto.SeatMapDto;
 import eurcine.backend.dto.SeatRowDto;
@@ -34,8 +36,12 @@ public class SeatMapService {
     }
 
     public SeatMapDto getSeatMap(Long programmazioneId) {
+        if (programmazioneId == null || programmazioneId < 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Programmazione non valida.");
+        }
+
         Programmazione programmazione = programmazioneRepository.findById(programmazioneId)
-            .orElseThrow(() -> new IllegalArgumentException("Programmazione non trovata: " + programmazioneId));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Programmazione non trovata."));
 
         List<SeatMapSeatView> seatViews = postoRepository.findSeatMapBySalaId(programmazione.getSala().getId());
         Set<Long> occupiedSeatIds = bigliettoRepository.findOccupiedPostoIdsByProgrammazioneId(programmazioneId)

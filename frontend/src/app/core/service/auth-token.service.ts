@@ -1,11 +1,13 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { SessionStorageService } from './session-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthTokenService {
   private static readonly TOKEN_KEY = 'eurcine_auth_token';
 
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly storage = inject(SessionStorageService);
   private token: string | null = null;
 
   getToken(): string | null {
@@ -13,11 +15,11 @@ export class AuthTokenService {
       return this.token;
     }
 
-    if (!isPlatformBrowser(this.platformId)) {
+    if (!isPlatformBrowser(this.platformId) || !this.storage.isBrowser()) {
       return null;
     }
 
-    const storedToken = localStorage.getItem(AuthTokenService.TOKEN_KEY);
+    const storedToken = this.storage.getItem(AuthTokenService.TOKEN_KEY);
     this.token = storedToken && storedToken.trim() ? storedToken : null;
     return this.token;
   }
@@ -26,16 +28,16 @@ export class AuthTokenService {
     const normalizedToken = token?.trim() ?? '';
     this.token = normalizedToken ? normalizedToken : null;
 
-    if (!isPlatformBrowser(this.platformId)) {
+    if (!isPlatformBrowser(this.platformId) || !this.storage.isBrowser()) {
       return;
     }
 
     if (this.token) {
-      localStorage.setItem(AuthTokenService.TOKEN_KEY, this.token);
+      this.storage.setItem(AuthTokenService.TOKEN_KEY, this.token);
       return;
     }
 
-    localStorage.removeItem(AuthTokenService.TOKEN_KEY);
+    this.storage.removeItem(AuthTokenService.TOKEN_KEY);
   }
 
   clearToken(): void {

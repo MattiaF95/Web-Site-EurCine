@@ -1,6 +1,8 @@
 import { HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { SessionStorageService } from '../service/session-storage.service';
 
 type CacheEntry = {
   timestamp: number;
@@ -27,7 +29,9 @@ const INVALIDATE_PREFIXES = [
 ];
 
 export const apiCacheInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
-  if (!isBrowser()) {
+  const storage = inject(SessionStorageService);
+
+  if (!storage.isBrowser()) {
     return next(req);
   }
 
@@ -35,7 +39,7 @@ export const apiCacheInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
     const ttlMs = getTtlMs(req.url);
     if (ttlMs > 0) {
       const cacheKey = getCacheKey(req);
-      const cached = readCache(cacheKey, ttlMs);
+      const cached = readCache(storage, cacheKey, ttlMs);
       if (cached) {
         return of(new HttpResponse({
           body: cached.body,
@@ -48,7 +52,7 @@ export const apiCacheInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
       return next(req).pipe(
         tap((event) => {
           if (event instanceof HttpResponse) {
-            writeCache(cacheKey, {
+            writeCache(storage, cacheKey, {
               timestamp: Date.now(),
               body: event.body,
               status: event.status,
@@ -65,7 +69,7 @@ export const apiCacheInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
     return next(req).pipe(
       tap((event) => {
         if (event instanceof HttpResponse && shouldInvalidate(req.url)) {
-          invalidateCaches();
+        invalidateCaches(storage);
         }
       })
     );
@@ -87,15 +91,15 @@ function shouldInvalidate(url: string): boolean {
   return INVALIDATE_PREFIXES.some((prefix) => url.includes(prefix));
 }
 
-function readCache(key: string, ttlMs: number): CacheEntry | null {
+function readCache(storage: SessionStorageService, key: string, ttlMs: number): CacheEntry | null {
   try {
-    const raw = localStorage.getItem(key);
+    const raw = storage.getItem(key);
     if (!raw) {
       return null;
     }
     const parsed = JSON.parse(raw) as CacheEntry;
     if (Date.now() - parsed.timestamp > ttlMs) {
-      localStorage.removeItem(key);
+      storage.removeItem(key);
       return null;
     }
     return parsed;
@@ -104,29 +108,22 @@ function readCache(key: string, ttlMs: number): CacheEntry | null {
   }
 }
 
-function writeCache(key: string, value: CacheEntry): void {
+function writeCache(storage: SessionStorageService, key: string, value: CacheEntry): void {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    storage.setItem(key, JSON.stringify(value));
   } catch {
     // Ignore quota/storage errors and continue without caching.
   }
 }
 
-function invalidateCaches(): void {
+function invalidateCaches(storage: SessionStorageService): void {
   try {
-    const keys: string[] = [];
-    for (let i = 0; i < localStorage.length; i += 1) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith(CACHE_PREFIX)) {
-        keys.push(key);
+    storage.keys().forEach((key) => {
+      if (key.startsWith(CACHE_PREFIX)) {
+        storage.removeItem(key);
       }
-    }
-    keys.forEach((key) => localStorage.removeItem(key));
+    });
   } catch {
     // Ignore storage errors.
   }
-}
-
-function isBrowser(): boolean {
-  return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
 }

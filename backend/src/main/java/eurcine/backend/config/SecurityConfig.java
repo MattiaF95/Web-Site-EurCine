@@ -3,6 +3,8 @@ package eurcine.backend.config;
 import eurcine.backend.security.JwtCookieAuthenticationFilter;
 import eurcine.backend.security.RestAccessDeniedHandler;
 import eurcine.backend.security.RestAuthenticationEntryPoint;
+import eurcine.backend.security.ReadOnlyModeFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -12,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -25,19 +28,30 @@ public class SecurityConfig {
     private final Environment environment;
     private final String corsAllowedOrigins;
     private final JwtCookieAuthenticationFilter jwtCookieAuthenticationFilter;
+    private final ReadOnlyModeFilter readOnlyModeFilter;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final RestAccessDeniedHandler restAccessDeniedHandler;
 
     public SecurityConfig(Environment environment,
                           @Value("${app.cors.allowed-origins:}") String corsAllowedOrigins,
                           JwtCookieAuthenticationFilter jwtCookieAuthenticationFilter,
+                          ReadOnlyModeFilter readOnlyModeFilter,
                           RestAuthenticationEntryPoint restAuthenticationEntryPoint,
                           RestAccessDeniedHandler restAccessDeniedHandler) {
         this.environment = environment;
         this.corsAllowedOrigins = corsAllowedOrigins;
         this.jwtCookieAuthenticationFilter = jwtCookieAuthenticationFilter;
+        this.readOnlyModeFilter = readOnlyModeFilter;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
         this.restAccessDeniedHandler = restAccessDeniedHandler;
+    }
+
+    @Bean
+    ReadOnlyModeFilter readOnlyModeFilter(
+        @Value("${app.read-only-mode:false}") boolean readOnlyMode,
+        ObjectMapper objectMapper
+    ) {
+        return new ReadOnlyModeFilter(readOnlyMode, objectMapper);
     }
 
     @Bean
@@ -67,9 +81,17 @@ public class SecurityConfig {
             )
             .httpBasic(httpBasic -> httpBasic.disable())
             .formLogin(form -> form.disable())
+            .addFilterBefore(readOnlyModeFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtCookieAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    FilterRegistrationBean<ReadOnlyModeFilter> readOnlyModeFilterRegistration(ReadOnlyModeFilter filter) {
+        FilterRegistrationBean<ReadOnlyModeFilter> registrationBean = new FilterRegistrationBean<>(filter);
+        registrationBean.setEnabled(false);
+        return registrationBean;
     }
 
     @Bean

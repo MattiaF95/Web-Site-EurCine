@@ -6,8 +6,7 @@ Il risultato? Il sito completo è stato realizzato in **2/3 giorni**, poi rifini
 
 🔗 **Live:** [https://web-site-eurcine-1.onrender.com/home](https://web-site-eurcine-1.onrender.com/home)
 
-⏱️ **Nota:** il sito gira su Render con piano gratuito e sia il backend che il DB vanno in **cold start**. Se è la prima visita dopo un periodo di inattività, backend e database devono avviarsi.  
-Attendere **4/5 minuti** prima che tutto sia operativo. 
+⏱️ **Nota:** in produzione il backend gira in modalità **read-only**. Le modifiche fatte dall'utente non toccano il DB condiviso: finiscono solo nella sandbox locale della sessione browser (`sessionStorage`) e spariscono alla chiusura della sessione/tab.
 
 ---
 
@@ -76,8 +75,13 @@ Password: admin123
 
 Il backend implementa un layer di sicurezza su più livelli.
 
-### Autenticazione — JWT via Cookie
-Il token JWT viene trasportato in un cookie `HttpOnly` (`eurcine_session`) oppure come `Bearer` header. Il filtro `JwtCookieAuthenticationFilter` intercetta ogni richiesta, verifica la firma del token e popola il `SecurityContext` con identità e ruolo dell'utente. La sessione è completamente **stateless**: nessuna sessione server-side, nessun `HttpSession`.
+### Autenticazione e sandbox di sessione
+In produzione l'app usa una modalità ibrida:
+- le richieste di sola lettura continuano a passare dal backend
+- le operazioni di scrittura vengono bloccate lato backend e simulate dal frontend nella sandbox di sessione
+- il token e lo stato mock vivono in `sessionStorage`, quindi si azzerano alla chiusura del browser/tab
+
+Il backend resta stateless e continua a validare identità e ruoli per le route reali.
 
 ### Autorizzazione per ruolo
 Le route sono protette a livello di `SecurityFilterChain`:
@@ -88,13 +92,13 @@ Le route sono protette a livello di `SecurityFilterChain`:
 HTTP Basic e form login sono **esplicitamente disabilitati**.
 
 ### SQL Injection
-Tutta l'interazione col database passa attraverso **Spring Data JPA** con query parametrizzate (JPQL e query derivate). Non esistono query SQL costruite per concatenazione di stringhe — Hibernate usa prepared statements per default, rendendo di fatto inutile qualsiasi tentativo di SQL injection classico.
+Tutta l'interazione col database passa attraverso **Spring Data JPA** con query parametrizzate (JPQL e query derivate). In più, i principali input utente hanno validazioni server-side e il profilo `prod` blocca ogni mutazione del DB.
 
 ### CORS
 Le origin autorizzate sono configurate tramite variabile d'ambiente (`CORS_ALLOWED_ORIGINS`). In produzione punta esclusivamente al dominio del frontend su Render — richieste da altri domini vengono bloccate a livello di preflight.
 
 ### Swagger UI — solo locale
-La Swagger UI (`/swagger-ui.html`) è attiva **solo in locale**, dove potete usarla per testare gli endpoint, fare verifiche manuali e magari anche penetration test sull'API. In produzione (profilo `prod`) è disabilitata (ma potete attivarla sull'eventuale vostro progetto deployato, facendo dei penetration test più realistici):
+La Swagger UI (`/swagger-ui.html`) è attiva **solo in locale**, dove potete usarla per testare gli endpoint, fare verifiche manuali e penetration test sull'API. In produzione (profilo `prod`) è disabilitata:
 
 ```properties
 # application-prod.properties
@@ -132,7 +136,8 @@ Se Flyway è abilitato (`flyway.enabled=true`), imposta **sempre** `ddl-auto=val
 |---|---|---|---|
 | `ddl-auto` | `update` | `none` | `validate` |
 | `flyway.enabled` | `false` | `true` | `true` |
-| Risultato | Hibernate crea le tabelle, nessun dato di seed | Flyway esegue V1–V7, db completo con dati | Flyway gestisce tutto, Hibernate solo controlla |
+| `app.read-only-mode` | `false` | `false` | `true` |
+| Risultato | Hibernate crea le tabelle, nessun dato di seed | Flyway esegue V1–V7, db completo con dati | Flyway gestisce tutto, Hibernate solo controlla, scritture bloccate |
 
 ### Script di migration
 
@@ -211,6 +216,12 @@ npm start
 
 Frontend su `http://localhost:4200`.
 
+### Workflow locale vs produzione
+
+- In locale il frontend parla al backend reale: login, registrazione, ordini e admin usano le API vere.
+- In produzione le scritture vengono emulate nel browser con `sessionStorage`, mentre il backend resta protetto in read-only.
+- Se chiudi la tab o il browser, lo stato mock della sessione viene perso.
+
 ---
 
 ## ☁️ Deploy in Produzione (Render + Aiven)
@@ -241,6 +252,7 @@ Flyway è **abilitato** e gestisce tutto all'avvio:
 - Crea le tabelle se non esistono
 - Applica le migration in sequenza versionate
 - `ddl-auto=validate` — Hibernate verifica solo la coerenza tra entity e schema, non modifica nulla
+- `app.read-only-mode=true` — qualsiasi richiesta mutativa viene bloccata prima di arrivare ai service
 
 ### Dockerfile (Backend)
 

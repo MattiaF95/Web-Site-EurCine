@@ -2,6 +2,8 @@ package eurcine.backend.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import eurcine.backend.dto.SalaRecord;
 import eurcine.backend.repository.projection.SalaView;
 import eurcine.backend.repository.SalaRepository;
@@ -22,9 +24,13 @@ public class SaleService {
     }
 
     public SalaRecord getOne(String nome) {
+        if (nome == null || nome.isBlank() || nome.length() > 64) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome sala non valido.");
+        }
+
         return salaRepository.findProjectedByNomeIgnoreCase(nome)
             .map(this::toRecord)
-            .orElseThrow(() -> new IllegalArgumentException("Sala non trovata: " + nome));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sala non trovata."));
     }
 
     private SalaRecord toRecord(SalaView view) {

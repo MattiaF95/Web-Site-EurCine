@@ -1,7 +1,7 @@
 -- Seed admin utente (idempotente)
 
 INSERT INTO utente (nome, cognome, email, password_hash, created_at)
-SELECT 'Admin', 'Eurcine', 'admin@eurcine.it', 'admin123', NOW()
+SELECT 'Admin', 'Eurcine', 'admin@eurcine.it', '$2b$10$YZ17OCUlJnmwZha5RehF6uDJ8LP72SkgbGlVuOBwLhid7p5bLV.eK', NOW()
 WHERE NOT EXISTS (
   SELECT 1 FROM utente u WHERE u.email = 'admin@eurcine.it'
 );

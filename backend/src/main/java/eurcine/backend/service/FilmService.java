@@ -2,6 +2,8 @@ package eurcine.backend.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import eurcine.backend.dto.FilmRecord;
 import eurcine.backend.repository.FilmRepository;
 
@@ -27,6 +29,10 @@ public class FilmService {
     }
 
     public FilmRecord getOne(String titolo) {
+        if (titolo == null || titolo.isBlank() || titolo.length() > 255) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Titolo film non valido.");
+        }
+
         return filmRepository.findProjectedByTitoloIgnoreCase(titolo)
             .map(view -> new FilmRecord(
                 view.getTitolo(),
@@ -35,6 +41,6 @@ public class FilmService {
                 view.getTrama(),
                 view.getGeneriNomi()
             ))
-            .orElseThrow(() -> new IllegalArgumentException("Film non trovato: " + titolo));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Film non trovato."));
     }
 }

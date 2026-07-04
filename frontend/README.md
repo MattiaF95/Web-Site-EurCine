@@ -2,6 +2,13 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.11.
 
+## Runtime workflow
+
+- In local development the frontend talks to the real backend API.
+- In production the backend is treated as read-only for mutating endpoints.
+- Create/update/delete flows are simulated in the browser through `sessionStorage`.
+- The mock state is tied to the browser session and is cleared when the tab/browser session ends.
+
 ## Development server
 
 To start a local development server, run:
@@ -11,6 +18,14 @@ ng serve
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+## Production behavior
+
+When deployed, the app keeps read requests against the backend, but write requests are redirected to the session sandbox. This means:
+
+- users can keep testing without affecting the shared database
+- a new browser session starts from a clean state
+- closing the browser/tab removes the mock data stored in `sessionStorage`
 
 ## Code scaffolding
 
