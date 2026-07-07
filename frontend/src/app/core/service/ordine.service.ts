@@ -15,6 +15,15 @@ type SeatMapCache = {
   righe: Array<{ fila: string; posti: Array<{ postoId: number; numero: number; stato: string }> }>;
 };
 
+type PublicProgrammazione = {
+  programmazioneId: number;
+  filmTitolo: string;
+  salaNome: string;
+  startAt: string;
+  prezzoBasePre18: number;
+  prezzoBasePost18: number;
+};
+
 @Injectable({ providedIn: 'root' })
 export class OrdineService {
   private readonly http = inject(HttpClient);
@@ -68,6 +77,8 @@ export class OrdineService {
     if (!seatMap) {
       throw new Error('Seat map non disponibile nella sessione.');
     }
+    const programmazione = this.sandbox.readCacheBody<PublicProgrammazione[]>('GET', '/api/programmazione')
+      ?.find((item) => item.programmazioneId === request.programmazioneId);
 
     const selectedSeats = new Set(request.postoIds);
     const seatLookup = new Map<number, { fila: string; numero: number }>();
@@ -81,7 +92,7 @@ export class OrdineService {
 
     const nextOrderNumber = this.sandbox.getNextOrderNumber();
     const numeroOrdine = `ORD-${String(nextOrderNumber).padStart(6, '0')}`;
-    const prezzoBiglietto = 10;
+    const prezzoBiglietto = this.resolvePrice(seatMap.startAt, programmazione);
     const biglietti: Biglietto[] = request.postoIds.map((postoId, index) => {
       const place = seatLookup.get(postoId);
       return {
@@ -148,5 +159,14 @@ export class OrdineService {
       statusText: 'Bad Request',
       error: { message }
     });
+  }
+
+  private resolvePrice(startAt: string, programmazione?: PublicProgrammazione): number {
+    if (programmazione) {
+      const hour = new Date(startAt).getHours();
+      return hour < 18 ? programmazione.prezzoBasePre18 : programmazione.prezzoBasePost18;
+    }
+
+    return 4.9;
   }
 }

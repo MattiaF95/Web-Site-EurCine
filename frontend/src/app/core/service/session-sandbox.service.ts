@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { AuthMeResponse, LoginResponse, RegisterRequest } from '../model/auth.model';
 import { AdminFilmFormData, AdminProgrammazioneCreatedItem } from '../model/admin-film/admin-film-management.model';
 import { CreateOrdineRequest, Ordine, Biglietto } from '../model/ordine.model';
+import { AuthTokenService } from './auth-token.service';
 import { SessionStorageService } from './session-storage.service';
 
 type CacheEntry<T> = {
@@ -13,7 +14,6 @@ type CacheEntry<T> = {
 
 type MockUser = AuthMeResponse & {
   password: string;
-  token: string;
 };
 
 type MockOrderRecord = {
@@ -22,12 +22,15 @@ type MockOrderRecord = {
   postoIds: number[];
 };
 
-type SandboxState = {
+type SandboxDirectory = {
+  users: MockUser[];
+  nextUserId: number;
+};
+
+type SandboxWorkspace = {
   auth: {
-    users: MockUser[];
     activeUserId: number | null;
     activeToken: string | null;
-    nextUserId: number;
   };
   orders: {
     items: MockOrderRecord[];
@@ -46,26 +49,29 @@ type SandboxState = {
   };
 };
 
-const STATE_KEY = 'eurcine_session_sandbox_state_v1';
+const DIRECTORY_KEY = 'eurcine_session_sandbox_directory_v1';
+const WORKSPACE_PREFIX = 'eurcine_session_sandbox_workspace_v1:';
 const CACHE_PREFIX = 'eurcine_http_cache:';
 
-const INITIAL_STATE: SandboxState = {
+const INITIAL_DIRECTORY: SandboxDirectory = {
+  users: [
+    {
+      utenteId: 1,
+      nome: 'Admin',
+      cognome: 'Eurcine',
+      email: 'admin@eurcine.it',
+      ruolo: 'SUPER_ADMIN',
+      message: 'Sessione mock pronta.',
+      password: 'admin123'
+    }
+  ],
+  nextUserId: 2
+};
+
+const INITIAL_WORKSPACE: SandboxWorkspace = {
   auth: {
-    users: [
-      {
-        utenteId: 1,
-        nome: 'Admin',
-        cognome: 'Eurcine',
-        email: 'admin@eurcine.it',
-        ruolo: 'SUPER_ADMIN',
-        message: 'Sessione mock pronta.',
-        password: 'admin123',
-        token: ''
-      }
-    ],
     activeUserId: null,
-    activeToken: null,
-    nextUserId: 2
+    activeToken: null
   },
   orders: {
     items: [],
@@ -87,117 +93,117 @@ const INITIAL_STATE: SandboxState = {
 @Injectable({ providedIn: 'root' })
 export class SessionSandboxService {
   private readonly storage = inject(SessionStorageService);
+  private readonly authTokenService = inject(AuthTokenService);
 
   isActive(): boolean {
     return this.storage.isBrowser();
   }
 
-  getState(): SandboxState {
-    return this.storage.readJson(STATE_KEY, this.cloneInitialState());
+  getDirectory(): SandboxDirectory {
+    return this.storage.readJson(DIRECTORY_KEY, this.cloneInitialDirectory());
   }
 
-  updateState(mutator: (draft: SandboxState) => void): SandboxState {
-    const draft = this.getState();
+  updateDirectory(mutator: (draft: SandboxDirectory) => void): SandboxDirectory {
+    const draft = this.getDirectory();
     mutator(draft);
-    this.storage.writeJson(STATE_KEY, draft);
+    this.storage.writeJson(DIRECTORY_KEY, draft);
     return draft;
   }
 
   getMockSession(token?: string | null): AuthMeResponse | null {
-    const state = this.getState();
-    const current = state.auth.users.find((user) => user.utenteId === state.auth.activeUserId) ?? null;
-    if (!current) {
+    const workspace = this.getWorkspace(token);
+    if (!workspace.auth.activeUserId) {
       return null;
     }
-    if (token && state.auth.activeToken && token !== state.auth.activeToken) {
-      return null;
-    }
-    return this.toMeResponse(current);
+
+    const user = this.getDirectory().users.find((item) => item.utenteId === workspace.auth.activeUserId) ?? null;
+    return user ? this.toMeResponse(user) : null;
   }
 
   loginMock(payload: { email: string; password: string }): LoginResponse {
     const normalizedEmail = payload.email.trim().toLowerCase();
     const normalizedPassword = payload.password;
-    let response: LoginResponse | null = null;
+    const user = this.getDirectory().users.find(
+      (item) => item.email.toLowerCase() === normalizedEmail && item.password === normalizedPassword
+    );
 
-    this.updateState((draft) => {
-      const user = draft.auth.users.find(
-        (item) => item.email.toLowerCase() === normalizedEmail && item.password === normalizedPassword
-      );
-      if (!user) {
-        throw new Error('Credenziali non valide.');
-      }
-
-      draft.auth.activeUserId = user.utenteId;
-      draft.auth.activeToken = this.generateToken(user.utenteId);
-      user.token = draft.auth.activeToken;
-      response = this.toLoginResponse(user, draft.auth.activeToken, 'Login effettuato con successo.');
-    });
-
-    if (!response) {
-      throw new Error('Login non riuscito.');
+    if (!user) {
+      throw new Error('Credenziali non valide.');
     }
 
-    this.setCacheResponse('/api/auth/me', this.getMockSession());
-    return response;
+    const token = this.generateToken(user.utenteId);
+    const workspace: SandboxWorkspace = {
+      ...this.cloneInitialWorkspace(),
+      auth: {
+        activeUserId: user.utenteId,
+        activeToken: token
+      }
+    };
+
+    this.writeWorkspace(token, workspace);
+    this.setCacheResponse('/api/auth/me', this.toMeResponse(user), 'GET', 200, 'OK', token);
+    return this.toLoginResponse(user, token, 'Login effettuato con successo.');
   }
 
   registerMock(payload: RegisterRequest): LoginResponse {
-    let response: LoginResponse | null = null;
     const normalizedEmail = payload.email.trim().toLowerCase();
+    let createdUser: MockUser | undefined;
 
-    this.updateState((draft) => {
-      if (draft.auth.users.some((item) => item.email.toLowerCase() === normalizedEmail)) {
+    this.updateDirectory((draft) => {
+      if (draft.users.some((item) => item.email.toLowerCase() === normalizedEmail)) {
         throw new Error('Esiste già un account con questa email.');
       }
 
-      const user: MockUser = {
-        utenteId: draft.auth.nextUserId,
+      createdUser = {
+        utenteId: draft.nextUserId,
         nome: payload.nome.trim(),
         cognome: payload.cognome.trim(),
         email: payload.email.trim(),
         ruolo: 'USER',
         message: 'Registrazione effettuata con successo.',
-        password: payload.password,
-        token: ''
+        password: payload.password
       };
 
-      draft.auth.nextUserId += 1;
-      draft.auth.users.push(user);
-      draft.auth.activeUserId = user.utenteId;
-      draft.auth.activeToken = this.generateToken(user.utenteId);
-      user.token = draft.auth.activeToken;
-      response = this.toLoginResponse(user, draft.auth.activeToken, 'Registrazione effettuata con successo.');
+      draft.nextUserId += 1;
+      draft.users.push(createdUser);
     });
 
-    if (!response) {
+    if (!createdUser) {
       throw new Error('Registrazione non riuscita.');
     }
 
-    this.setCacheResponse('/api/auth/me', this.getMockSession());
-    return response;
+    const user = createdUser;
+    const token = this.generateToken(user.utenteId);
+    const workspace: SandboxWorkspace = {
+      ...this.cloneInitialWorkspace(),
+      auth: {
+        activeUserId: user.utenteId,
+        activeToken: token
+      }
+    };
+
+    this.writeWorkspace(token, workspace);
+    this.setCacheResponse('/api/auth/me', this.toMeResponse(user), 'GET', 200, 'OK', token);
+    return this.toLoginResponse(user, token, 'Registrazione effettuata con successo.');
   }
 
   logoutMock(): void {
-    this.updateState((draft) => {
-      draft.auth.activeUserId = null;
-      draft.auth.activeToken = null;
-    });
+    // The active token is cleared by AuthStateService; workspaces remain isolated per session token.
   }
 
   createMockOrder(record: MockOrderRecord): void {
-    this.updateState((draft) => {
+    this.updateWorkspace((draft) => {
       draft.orders.items.push(record);
       draft.orders.nextOrderNumber += 1;
     });
   }
 
   getMockOrders(): Ordine[] {
-    return this.getState().orders.items.map((item) => item.ordine);
+    return this.getWorkspace().orders.items.map((item) => item.ordine);
   }
 
   getMockOrder(numeroOrdine: string): Ordine | null {
-    return this.getState().orders.items.find((item) => item.ordine.numeroOrdine === numeroOrdine)?.ordine ?? null;
+    return this.getWorkspace().orders.items.find((item) => item.ordine.numeroOrdine === numeroOrdine)?.ordine ?? null;
   }
 
   getMockBiglietti(numeroOrdine: string): Biglietto[] {
@@ -205,23 +211,23 @@ export class SessionSandboxService {
   }
 
   getNextOrderNumber(): number {
-    return this.getState().orders.nextOrderNumber;
+    return this.getWorkspace().orders.nextOrderNumber;
   }
 
-  getFilmState(): SandboxState['films'] {
-    return this.getState().films;
+  getFilmState(): SandboxWorkspace['films'] {
+    return this.getWorkspace().films;
   }
 
-  setFilmState(updater: (draft: SandboxState['films']) => void): void {
-    this.updateState((draft) => updater(draft.films));
+  setFilmState(updater: (draft: SandboxWorkspace['films']) => void): void {
+    this.updateWorkspace((draft) => updater(draft.films));
   }
 
-  getProgrammazioneState(): SandboxState['programmazioni'] {
-    return this.getState().programmazioni;
+  getProgrammazioneState(): SandboxWorkspace['programmazioni'] {
+    return this.getWorkspace().programmazioni;
   }
 
-  setProgrammazioneState(updater: (draft: SandboxState['programmazioni']) => void): void {
-    this.updateState((draft) => updater(draft.programmazioni));
+  setProgrammazioneState(updater: (draft: SandboxWorkspace['programmazioni']) => void): void {
+    this.updateWorkspace((draft) => updater(draft.programmazioni));
   }
 
   readCache<T>(method: string, urlWithParams: string): CacheEntry<T> | null {
@@ -241,8 +247,15 @@ export class SessionSandboxService {
     return this.readCache<T>(method, urlWithParams)?.body ?? null;
   }
 
-  setCacheResponse<T>(urlWithParams: string, body: T, method = 'GET', status = 200, statusText = 'OK'): void {
-    this.storage.writeJson<CacheEntry<T>>(this.cacheKey(method, urlWithParams), {
+  setCacheResponse<T>(
+    urlWithParams: string,
+    body: T,
+    method = 'GET',
+    status = 200,
+    statusText = 'OK',
+    token?: string | null
+  ): void {
+    this.storage.writeJson<CacheEntry<T>>(this.cacheKey(method, urlWithParams, token), {
       timestamp: Date.now(),
       body,
       status,
@@ -250,8 +263,8 @@ export class SessionSandboxService {
     });
   }
 
-  removeCache(urlWithParams: string, method = 'GET'): void {
-    this.storage.removeItem(this.cacheKey(method, urlWithParams));
+  removeCache(urlWithParams: string, method = 'GET', token?: string | null): void {
+    this.storage.removeItem(this.cacheKey(method, urlWithParams, token));
   }
 
   removeCachesContaining(fragment: string): void {
@@ -267,6 +280,21 @@ export class SessionSandboxService {
       ? crypto.randomUUID()
       : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
     return `mock-${userId}-${nonce}`;
+  }
+
+  private getWorkspace(token?: string | null): SandboxWorkspace {
+    return this.storage.readJson(this.workspaceKey(token), this.cloneInitialWorkspace());
+  }
+
+  private updateWorkspace(mutator: (draft: SandboxWorkspace) => void, token?: string | null): SandboxWorkspace {
+    const draft = this.getWorkspace(token);
+    mutator(draft);
+    this.storage.writeJson(this.workspaceKey(token), draft);
+    return draft;
+  }
+
+  private writeWorkspace(token: string, workspace: SandboxWorkspace): void {
+    this.storage.writeJson(this.workspaceKey(token), workspace);
   }
 
   private toMeResponse(user: MockUser): AuthMeResponse {
@@ -292,11 +320,24 @@ export class SessionSandboxService {
     };
   }
 
-  private cacheKey(method: string, urlWithParams: string): string {
-    return `${CACHE_PREFIX}${method}:${urlWithParams}`;
+  private resolveScopeToken(token?: string | null): string {
+    const normalized = token?.trim() ?? this.authTokenService.getToken()?.trim() ?? '';
+    return normalized || 'anon';
   }
 
-  private cloneInitialState(): SandboxState {
-    return JSON.parse(JSON.stringify(INITIAL_STATE)) as SandboxState;
+  private workspaceKey(token?: string | null): string {
+    return `${WORKSPACE_PREFIX}${this.resolveScopeToken(token)}`;
+  }
+
+  private cacheKey(method: string, urlWithParams: string, token?: string | null): string {
+    return `${CACHE_PREFIX}${this.resolveScopeToken(token)}:${method}:${urlWithParams}`;
+  }
+
+  private cloneInitialDirectory(): SandboxDirectory {
+    return JSON.parse(JSON.stringify(INITIAL_DIRECTORY)) as SandboxDirectory;
+  }
+
+  private cloneInitialWorkspace(): SandboxWorkspace {
+    return JSON.parse(JSON.stringify(INITIAL_WORKSPACE)) as SandboxWorkspace;
   }
 }

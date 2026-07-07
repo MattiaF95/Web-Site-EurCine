@@ -2,6 +2,7 @@ import { HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpResponse 
 import { inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { AuthTokenService } from '../service/auth-token.service';
 import { SessionStorageService } from '../service/session-storage.service';
 
 type CacheEntry = {
@@ -30,6 +31,8 @@ const INVALIDATE_PREFIXES = [
 
 export const apiCacheInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
   const storage = inject(SessionStorageService);
+  const authTokenService = inject(AuthTokenService);
+  const scopeToken = authTokenService.getToken();
 
   if (!storage.isBrowser()) {
     return next(req);
@@ -38,7 +41,7 @@ export const apiCacheInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
   if (req.method === 'GET') {
     const ttlMs = getTtlMs(req.url);
     if (ttlMs > 0) {
-      const cacheKey = getCacheKey(req);
+      const cacheKey = getCacheKey(req, scopeToken);
       const cached = readCache(storage, cacheKey, ttlMs);
       if (cached) {
         return of(new HttpResponse({
@@ -69,7 +72,7 @@ export const apiCacheInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
     return next(req).pipe(
       tap((event) => {
         if (event instanceof HttpResponse && shouldInvalidate(req.url)) {
-        invalidateCaches(storage);
+          invalidateCaches(storage);
         }
       })
     );
@@ -78,8 +81,9 @@ export const apiCacheInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
   return next(req);
 };
 
-function getCacheKey(req: HttpRequest<unknown>): string {
-  return `${CACHE_PREFIX}${req.method}:${req.urlWithParams}`;
+function getCacheKey(req: HttpRequest<unknown>, scopeToken: string | null): string {
+  const resolvedScope = scopeToken?.trim() || 'anon';
+  return `${CACHE_PREFIX}${resolvedScope}:${req.method}:${req.urlWithParams}`;
 }
 
 function getTtlMs(url: string): number {

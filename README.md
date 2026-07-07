@@ -68,6 +68,8 @@ Password: admin123
 ```
 
 > ⚠️ **Vi chiedo di non modificare in maniera brutale il database.** Usatelo per giocare, testare e verificare — è un progetto didattico e voglio che resti funzionante per chiunque voglia esplorarlo. Grazie! 🙏
+>
+> In produzione il DB è in sola lettura: le modifiche che fate non devono mai essere usate per forzare dati reali, perché finiscono solo nella sessione del browser e si perdono quando chiudete la scheda.
 
 ---
 
@@ -79,7 +81,8 @@ Il backend implementa un layer di sicurezza su più livelli.
 In produzione l'app usa una modalità ibrida:
 - le richieste di sola lettura continuano a passare dal backend
 - le operazioni di scrittura vengono bloccate lato backend e simulate dal frontend nella sandbox di sessione
-- il token e lo stato mock vivono in `sessionStorage`, quindi si azzerano alla chiusura del browser/tab
+- il token, lo stato mock e le cache della sandbox vivono in `sessionStorage`, quindi si azzerano alla chiusura del browser/tab
+- ogni scheda ha la propria sessione locale: aprire una nuova tab significa ripartire da zero
 
 Il backend resta stateless e continua a validare identità e ruoli per le route reali.
 
@@ -92,7 +95,7 @@ Le route sono protette a livello di `SecurityFilterChain`:
 HTTP Basic e form login sono **esplicitamente disabilitati**.
 
 ### SQL Injection
-Tutta l'interazione col database passa attraverso **Spring Data JPA** con query parametrizzate (JPQL e query derivate). In più, i principali input utente hanno validazioni server-side e il profilo `prod` blocca ogni mutazione del DB.
+Tutta l'interazione col database passa attraverso **Spring Data JPA** con query parametrizzate (JPQL e query derivate). In più, i principali input utente hanno validazioni server-side e il profilo `prod` blocca ogni mutazione del DB, così in produzione i dati restano sempre protetti in sola lettura.
 
 ### CORS
 Le origin autorizzate sono configurate tramite variabile d'ambiente (`CORS_ALLOWED_ORIGINS`). In produzione punta esclusivamente al dominio del frontend su Render — richieste da altri domini vengono bloccate a livello di preflight.
@@ -219,8 +222,8 @@ Frontend su `http://localhost:4200`.
 ### Workflow locale vs produzione
 
 - In locale il frontend parla al backend reale: login, registrazione, ordini e admin usano le API vere.
-- In produzione le scritture vengono emulate nel browser con `sessionStorage`, mentre il backend resta protetto in read-only.
-- Se chiudi la tab o il browser, lo stato mock della sessione viene perso.
+- In produzione le scritture vengono emulate nel browser con `sessionStorage`, mentre il backend resta protetto in read-only e il DB non viene toccato.
+- Se chiudi la tab o il browser, lo stato mock della sessione viene perso. Aprendo una nuova scheda riparti pulito.
 
 ---
 
@@ -252,7 +255,7 @@ Flyway è **abilitato** e gestisce tutto all'avvio:
 - Crea le tabelle se non esistono
 - Applica le migration in sequenza versionate
 - `ddl-auto=validate` — Hibernate verifica solo la coerenza tra entity e schema, non modifica nulla
-- `app.read-only-mode=true` — qualsiasi richiesta mutativa viene bloccata prima di arrivare ai service
+- `app.read-only-mode=true` — qualsiasi richiesta mutativa viene bloccata prima di arrivare ai service, così il DB di produzione resta invariato
 
 ### Dockerfile (Backend)
 
