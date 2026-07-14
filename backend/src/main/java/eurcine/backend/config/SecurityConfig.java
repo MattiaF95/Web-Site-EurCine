@@ -28,20 +28,17 @@ public class SecurityConfig {
     private final Environment environment;
     private final String corsAllowedOrigins;
     private final JwtCookieAuthenticationFilter jwtCookieAuthenticationFilter;
-    private final ReadOnlyModeFilter readOnlyModeFilter;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final RestAccessDeniedHandler restAccessDeniedHandler;
 
     public SecurityConfig(Environment environment,
                           @Value("${app.cors.allowed-origins:}") String corsAllowedOrigins,
                           JwtCookieAuthenticationFilter jwtCookieAuthenticationFilter,
-                          ReadOnlyModeFilter readOnlyModeFilter,
                           RestAuthenticationEntryPoint restAuthenticationEntryPoint,
                           RestAccessDeniedHandler restAccessDeniedHandler) {
         this.environment = environment;
         this.corsAllowedOrigins = corsAllowedOrigins;
         this.jwtCookieAuthenticationFilter = jwtCookieAuthenticationFilter;
-        this.readOnlyModeFilter = readOnlyModeFilter;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
         this.restAccessDeniedHandler = restAccessDeniedHandler;
     }
@@ -55,7 +52,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(
+        HttpSecurity http,
+        ReadOnlyModeFilter readOnlyModeFilter
+    ) throws Exception {
         http
             .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())
