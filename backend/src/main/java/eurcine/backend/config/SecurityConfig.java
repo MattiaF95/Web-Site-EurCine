@@ -4,7 +4,6 @@ import eurcine.backend.security.JwtCookieAuthenticationFilter;
 import eurcine.backend.security.RestAccessDeniedHandler;
 import eurcine.backend.security.RestAuthenticationEntryPoint;
 import eurcine.backend.security.ReadOnlyModeFilter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -45,10 +44,9 @@ public class SecurityConfig {
 
     @Bean
     ReadOnlyModeFilter readOnlyModeFilter(
-        @Value("${app.read-only-mode:false}") boolean readOnlyMode,
-        ObjectMapper objectMapper
+        @Value("${app.read-only-mode:false}") boolean readOnlyMode
     ) {
-        return new ReadOnlyModeFilter(readOnlyMode, objectMapper);
+        return new ReadOnlyModeFilter(readOnlyMode);
     }
 
     @Bean

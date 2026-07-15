@@ -1,13 +1,10 @@
 package eurcine.backend.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -16,14 +13,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class ReadOnlyModeFilter extends OncePerRequestFilter {
 
     private final boolean readOnlyMode;
-    private final ObjectMapper objectMapper;
 
     public ReadOnlyModeFilter(
-        @Value("${app.read-only-mode:false}") boolean readOnlyMode,
-        ObjectMapper objectMapper
+        @Value("${app.read-only-mode:false}") boolean readOnlyMode
     ) {
         this.readOnlyMode = readOnlyMode;
-        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -62,10 +56,8 @@ public class ReadOnlyModeFilter extends OncePerRequestFilter {
         response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("status", HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-        body.put("message", "Prod read-only mode attivo: questa operazione e' disabilitata.");
-
-        objectMapper.writeValue(response.getOutputStream(), body);
+        response.getWriter().write(
+            "{\"status\":405,\"message\":\"Prod read-only mode attivo: questa operazione e' disabilitata.\"}"
+        );
     }
 }
