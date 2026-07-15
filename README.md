@@ -6,7 +6,7 @@ Il risultato? Il sito completo è stato realizzato in **2/3 giorni**, poi rifini
 
 🔗 **Live:** [https://web-site-eurcine-1.onrender.com/home](https://web-site-eurcine-1.onrender.com/home)
 
-⏱️ **Nota:** in produzione il backend gira in modalità **read-only**. Le modifiche fatte dall'utente non toccano il DB condiviso: finiscono solo nella sandbox locale della sessione browser (`sessionStorage`) e spariscono alla chiusura della sessione/tab.
+⏱️ **Nota:** in produzione il backend gira in modalità **read-only**. Le modifiche fatte dall'utente o dall'admin non toccano il DB condiviso: finiscono solo nella sandbox locale della sessione browser (`sessionStorage`) e spariscono alla chiusura della sessione/tab.
 
 ---
 
@@ -49,14 +49,14 @@ Il sito simula un cinema reale con le funzionalità principali:
 - 🎥 **Sfogliare i film** in programmazione e leggere le trame
 - 📅 **Vedere la programmazione settimanale** con orari e sale
 - 🪑 **Selezionare i posti** direttamente sulla mappa interattiva della sala
-- 🎟️ **Acquistare biglietti** (prezzi differenziati pre/post 18:00)
+- 🎟️ **Acquistare biglietti** (prezzi differenziati pre/post 18:00; in produzione l'acquisto è simulato nella sessione)
 - 👤 **Registrarsi** e creare il proprio account cliente
 - 📦 **Consultare i propri ordini** nell'area personale
 - 🏛️ **Esplorare le sale** con caratteristiche tecniche (Dolby Atmos, 4DX, IMAX, ecc.)
 
 ### Area Admin 🔑
 
-Esiste un'area amministrativa protetta per:
+Esiste un'area amministrativa protetta per gestire, in locale, le seguenti operazioni:
 - Aggiungere, modificare ed eliminare film
 - Gestire la programmazione settimanale
 - Visionare gli ordini di ogni utente registrato
@@ -67,9 +67,9 @@ Email:    admin@eurcine.it
 Password: admin123
 ```
 
-> ⚠️ **Vi chiedo di non modificare in maniera brutale il database.** Usatelo per giocare, testare e verificare — è un progetto didattico e voglio che resti funzionante per chiunque voglia esplorarlo. Grazie! 🙏
+> 🔒 **Il database di produzione non è modificabile dall'applicazione.** Il profilo `prod` abilita Flyway, imposta Hibernate in `validate` e blocca tutte le richieste mutative prima che raggiungano service e repository.
 >
-> In produzione il DB è in sola lettura: le modifiche che fate non devono mai essere usate per forzare dati reali, perché finiscono solo nella sessione del browser e si perdono quando chiudete la scheda.
+> In produzione le operazioni di scrittura dell'utente e dell'admin vengono simulate nella sandbox del browser (`sessionStorage`): non cambiano il DB condiviso e si perdono chiudendo tab o browser. Le migration Flyway sono l'unico flusso autorizzato per aggiornare lo schema.
 
 ---
 
@@ -79,8 +79,9 @@ Il backend implementa un layer di sicurezza su più livelli.
 
 ### Autenticazione e sandbox di sessione
 In produzione l'app usa una modalità ibrida:
-- le richieste di sola lettura continuano a passare dal backend
-- le operazioni di scrittura vengono bloccate lato backend e simulate dal frontend nella sandbox di sessione
+- le letture pubbliche e i cataloghi continuano a passare dal backend
+- autenticazione, registrazione, ordini e scritture admin vengono gestiti nella sandbox del frontend quando la sessione browser è attiva
+- le richieste mutative eventualmente inviate al backend vengono bloccate lato backend
 - il token, lo stato mock e le cache della sandbox vivono in `sessionStorage`, quindi si azzerano alla chiusura del browser/tab
 - ogni scheda ha la propria sessione locale: aprire una nuova tab significa ripartire da zero
 
@@ -128,6 +129,8 @@ Il progetto usa **due meccanismi distinti** per la gestione dello schema, con co
 - Ogni script `V{n}__descrizione.sql` viene eseguito una sola volta, in ordine, e tracciato nella tabella `flyway_schema_history`.
 - Se uno script è già stato applicato, Flyway lo salta.
 - Gestisce sia la creazione dello schema che il seed dei dati (film, sale, programmazione, admin).
+- Una migration già applicata è immutabile: non va modificata, perché il checksum registrato non corrisponderebbe più al file.
+- Ogni modifica successiva allo schema o ai dati va introdotta con un nuovo script versionato (`V9`, `V10`, ...).
 
 ### Regola da seguire: non usarli contemporaneamente
 
@@ -135,12 +138,12 @@ Se Flyway è abilitato (`flyway.enabled=true`), imposta **sempre** `ddl-auto=val
 
 ### Configurazione per ambiente
 
-| | Locale (default) | Locale con seed | Produzione |
+| | Locale (default) | Locale con Flyway | Produzione |
 |---|---|---|---|
-| `ddl-auto` | `update` | `none` | `validate` |
+| `ddl-auto` | `validate` | `validate` | `validate` |
 | `flyway.enabled` | `false` | `true` | `true` |
 | `app.read-only-mode` | `false` | `false` | `true` |
-| Risultato | Hibernate crea le tabelle, nessun dato di seed | Flyway esegue V1–V7, db completo con dati | Flyway gestisce tutto, Hibernate solo controlla, scritture bloccate |
+| Risultato | Hibernate controlla uno schema già esistente, senza migration o seed | Flyway esegue V1–V8 e Hibernate verifica lo schema | Flyway gestisce tutto, Hibernate solo controlla, scritture bloccate |
 
 ### Script di migration
 
@@ -153,6 +156,7 @@ Se Flyway è abilitato (`flyway.enabled=true`), imposta **sempre** `ddl-auto=val
 | `V5__seed_programmazione_daily.sql` | Programmazione giornaliera di esempio |
 | `V6__seed_programmazione_weekly.sql` | Programmazione settimanale estesa |
 | `V7__add_cliente_and_order_user_fk.sql` | Tabella cliente e FK ordini |
+| `V8__update_admin_password_hash.sql` | Aggiornamento idempotente dell'hash password admin |
 
 ---
 
@@ -173,7 +177,7 @@ cd backend/src/main/resources
 cp application-example.properties application.properties
 ```
 
-Il file usa già valori di default per locale:
+Per un ambiente locale completo con schema e dati gestiti da Flyway, imposta:
 
 ```properties
 spring.datasource.url=jdbc:mysql://127.0.0.1:3306/eurcine?createDatabaseIfNotExist=true&serverTimezone=UTC
@@ -183,21 +187,22 @@ app.cors.allowed-origins=http://localhost:4200
 app.jwt.secret=change-this-example-secret-at-least-32-characters
 app.jwt.expiration-days=7
 
-# Locale: Hibernate gestisce lo schema, nessun dato di seed
-spring.jpa.hibernate.ddl-auto=update
-spring.flyway.enabled=false
+# Locale con Flyway: Flyway gestisce schema e seed, Hibernate verifica soltanto
+spring.jpa.hibernate.ddl-auto=validate
+spring.flyway.enabled=true
+app.read-only-mode=false
 ```
 
 > Se il tuo MySQL ha credenziali diverse, modifica `spring.datasource.username` e `spring.datasource.password`.
 
-**Vuoi avere anche i dati di seed in locale** (film, sale, programmazione)? Modifica così:
+**Vuoi invece una modalità locale rapida senza Flyway e senza seed**? Usa questa configurazione alternativa:
 
 ```properties
-spring.jpa.hibernate.ddl-auto=none
-spring.flyway.enabled=true
+spring.jpa.hibernate.ddl-auto=update
+spring.flyway.enabled=false
 ```
 
-Flyway eseguirà tutti gli script V1–V7 al primo avvio e il DB sarà completo con tutti i dati.
+Con la modalità Flyway, gli script V1–V8 vengono eseguiti al primo avvio e il DB viene popolato con i dati previsti.
 
 ### 2. Avviare il Backend
 
@@ -222,7 +227,8 @@ Frontend su `http://localhost:4200`.
 ### Workflow locale vs produzione
 
 - In locale il frontend parla al backend reale: login, registrazione, ordini e admin usano le API vere.
-- In produzione le scritture vengono emulate nel browser con `sessionStorage`, mentre il backend resta protetto in read-only e il DB non viene toccato.
+- In produzione le richieste GET continuano a usare il backend reale; login, registrazione, ordini e modifiche admin vengono emulate nel browser con `sessionStorage`.
+- Il backend risponde `405` alle richieste mutative, mentre il DB resta protetto in read-only e non viene toccato dall'applicazione.
 - Se chiudi la tab o il browser, lo stato mock della sessione viene perso. Aprendo una nuova scheda riparti pulito.
 
 ---
@@ -256,6 +262,8 @@ Flyway è **abilitato** e gestisce tutto all'avvio:
 - Applica le migration in sequenza versionate
 - `ddl-auto=validate` — Hibernate verifica solo la coerenza tra entity e schema, non modifica nulla
 - `app.read-only-mode=true` — qualsiasi richiesta mutativa viene bloccata prima di arrivare ai service, così il DB di produzione resta invariato
+
+Le migration già applicate non devono essere modificate: per ogni evoluzione futura va aggiunto un nuovo file `V{n}__descrizione.sql`. In caso di errore di validazione checksum, va ripristinato il file storico e va creata una nuova migration; non va disabilitata la validazione.
 
 ### Dockerfile (Backend)
 
@@ -298,7 +306,7 @@ Web-Site-EurCine/
 │   │   ├── security/         # JWT filter, CSRF, handlers
 │   │   └── service/          # Business logic
 │   ├── src/main/resources/
-│   │   ├── db/migration/     # Script Flyway V1–V7
+│   │   ├── db/migration/     # Script Flyway V1–V8
 │   │   ├── application-example.properties
 │   │   └── application-prod.properties
 │   └── Dockerfile
