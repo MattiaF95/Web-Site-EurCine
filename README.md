@@ -373,6 +373,6 @@ Web-Site-EurCine/
   </tr>
 </table>
 
-## Crediti
+## Autore
 
 - Sviluppo, test, deploy: [@MattiaF95](https://github.com/MattiaF95)
