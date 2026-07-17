@@ -115,5 +115,9 @@ frontend/Thumbs.db
 eurcine/.github/java-upgrade/**
 backend/.github/java-upgrade/**
 
+# --- Python caches and bytecode ---
+**/__pycache__/
+*.py[cod]
+
 # Root editor settings (local)
 .vscode/
