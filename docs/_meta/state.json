@@ -1,0 +1,19 @@
+{
+  "documentationState": "present",
+  "bootstrap": true,
+  "language": "it",
+  "languageDecisionSource": "existing-canonical-docs",
+  "existingDocumentationPolicy": "preserve-in-place",
+  "rootReadmeModified": false,
+  "frontendReadmeModified": true,
+  "delegationPolicy": "selective",
+  "delegatedAreas": ["backend", "frontend"],
+  "parentOwnedAreas": ["architecture", "database", "security", "operations"],
+  "automation": {
+    "runtime": "created",
+    "codexAdapter": "created",
+    "agentRules": "created",
+    "hooks": "created",
+    "githubAction": "created"
+  }
+}

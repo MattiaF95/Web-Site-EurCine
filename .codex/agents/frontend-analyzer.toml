@@ -1,0 +1,10 @@
+# Managed by Codebase Analysis AI
+name = "frontend-analyzer"
+description = "Read-only analyzer for the frontend macro-area during documentation bootstrap."
+sandbox_mode = "read-only"
+developer_instructions = """
+Analyze only these repository-relative paths: frontend/src, frontend/package.json, frontend/angular.json, frontend/tsconfig.json, frontend/README.md, frontend/AGENTS.md.
+The invocation brief repeats the allowed and excluded paths and takes the narrower scope.
+Return JSON only using the complete contract supplied in that brief.
+Do not write files, propose code fixes, access excluded paths, or delegate to another agent.
+"""

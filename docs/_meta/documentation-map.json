@@ -1,0 +1,222 @@
+{
+  "approvedDelegation": {
+    "delegatedAreas": [
+      "backend",
+      "frontend"
+    ],
+    "parentOwnedAreas": [
+      "architecture",
+      "database",
+      "security",
+      "operations"
+    ],
+    "policy": "selective"
+  },
+  "documents": {
+    "architecture.overview": {
+      "path": "docs/architecture/overview.md",
+      "purpose": "Confini e flussi architetturali",
+      "sourcePatterns": [
+        "backend/src/main/java/**",
+        "frontend/src/app/**",
+        "backend/Dockerfile"
+      ]
+    },
+    "backend.overview": {
+      "path": "docs/backend/overview.md",
+      "purpose": "Backend e API",
+      "sourcePatterns": [
+        "backend/src/main/java/**",
+        "backend/pom.xml",
+        "backend/src/main/resources/application*.properties"
+      ]
+    },
+    "database.schema-and-migrations": {
+      "path": "docs/database/schema-and-migrations.md",
+      "purpose": "Schema e Flyway",
+      "sourcePatterns": [
+        "backend/src/main/resources/db/migration/**",
+        "backend/src/main/resources/application*.properties"
+      ]
+    },
+    "documentation.index": {
+      "path": "docs/index.md",
+      "purpose": "Navigazione canonica",
+      "sourcePatterns": []
+    },
+    "frontend.overview": {
+      "path": "docs/frontend/overview.md",
+      "purpose": "Frontend Angular",
+      "sourceHashes": {
+        "frontend/README.md": "7511401099db124fce4db782430cb2d5074f7dc4d205de1f28776396348af944"
+      },
+      "sourcePatterns": [
+        "frontend/src/**",
+        "frontend/package.json",
+        "frontend/angular.json",
+        "frontend/README.md"
+      ]
+    },
+    "metadata.coverage": {
+      "path": "docs/_meta/coverage.md",
+      "purpose": "Copertura delle fonti",
+      "sourcePatterns": []
+    },
+    "operations.local-and-production": {
+      "path": "docs/operations/local-and-production.md",
+      "purpose": "Avvio e deploy",
+      "sourcePatterns": [
+        "README.md",
+        "backend/Dockerfile",
+        "backend/src/main/resources/application*.properties",
+        "frontend/package.json"
+      ]
+    },
+    "security.runtime-security": {
+      "path": "docs/security/runtime-security.md",
+      "purpose": "Sicurezza e read-only",
+      "sourcePatterns": [
+        "backend/src/main/java/eurcine/backend/config/**",
+        "backend/src/main/java/eurcine/backend/security/**",
+        "backend/src/main/resources/application-prod.properties",
+        "frontend/src/app/core/guard/**",
+        "frontend/src/app/core/interceptor/**"
+      ]
+    }
+  },
+  "schemaVersion": 1,
+  "settings": {
+    "auditOnlyPatterns": [
+      "**/test/**",
+      "**/*.spec.ts"
+    ],
+    "documentationLanguage": "it",
+    "ignorePatterns": [
+      ".codex/**",
+      ".agents/**",
+      ".vscode/**",
+      ".github/workflows/codebase-analysis-ai.yml"
+    ],
+    "languageDecisionSource": "existing-canonical-docs"
+  },
+  "taxonomy": {
+    "documentationTopics": [
+      {
+        "candidatePaths": [
+          "docs/architecture/overview.md"
+        ],
+        "reason": "Descrive i confini e i flussi full-stack.",
+        "sourceAreas": [
+          "backend",
+          "frontend",
+          "operations"
+        ],
+        "topic": "architecture"
+      },
+      {
+        "candidatePaths": [
+          "docs/backend/overview.md"
+        ],
+        "reason": "Documenta API e regole applicative.",
+        "sourceAreas": [
+          "backend"
+        ],
+        "topic": "backend"
+      },
+      {
+        "candidatePaths": [
+          "docs/frontend/overview.md",
+          "frontend/README.md"
+        ],
+        "reason": "Documenta routing, SSR e sandbox browser.",
+        "sourceAreas": [
+          "frontend"
+        ],
+        "topic": "frontend"
+      },
+      {
+        "candidatePaths": [
+          "docs/database/schema-and-migrations.md"
+        ],
+        "reason": "Documenta modello e migrazioni.",
+        "sourceAreas": [
+          "database"
+        ],
+        "topic": "database"
+      },
+      {
+        "candidatePaths": [
+          "docs/security/runtime-security.md"
+        ],
+        "reason": "Descrive controlli backend e sessione frontend.",
+        "sourceAreas": [
+          "backend",
+          "frontend"
+        ],
+        "topic": "security"
+      },
+      {
+        "candidatePaths": [
+          "docs/operations/local-and-production.md"
+        ],
+        "reason": "Raccoglie runbook locale e produzione.",
+        "sourceAreas": [
+          "operations"
+        ],
+        "topic": "operations"
+      }
+    ],
+    "sourceAreas": {
+      "backend": {
+        "candidatePaths": [
+          "backend/src",
+          "backend/pom.xml",
+          "backend/Dockerfile"
+        ],
+        "evidence": [
+          "backend/pom.xml",
+          "backend/src/main/java",
+          "backend/Dockerfile"
+        ],
+        "reason": "Modulo Spring Boot indipendente con API, servizi e persistenza."
+      },
+      "database": {
+        "candidatePaths": [
+          "backend/src/main/resources/db/migration",
+          "backend/src/main/resources/application-prod.properties"
+        ],
+        "evidence": [
+          "backend/src/main/resources/db/migration/V1__create_schema.sql",
+          "backend/src/main/resources/application-prod.properties"
+        ],
+        "reason": "Schema e dati iniziali gestiti da migration Flyway versionate."
+      },
+      "frontend": {
+        "candidatePaths": [
+          "frontend/src",
+          "frontend/package.json",
+          "frontend/angular.json"
+        ],
+        "evidence": [
+          "frontend/package.json",
+          "frontend/src/app/app.routes.ts",
+          "frontend/angular.json"
+        ],
+        "reason": "Modulo Angular SSR indipendente con routing e servizi browser."
+      },
+      "operations": {
+        "candidatePaths": [
+          "backend/Dockerfile",
+          "README.md",
+          "frontend/package.json"
+        ],
+        "evidence": [
+          "backend/Dockerfile",
+          "README.md",
+          "frontend/package.json"
+        ],
+        "reason": "Build, avvio locale e deploy attraversano i due moduli."
+      }
+    }
+  }
+}

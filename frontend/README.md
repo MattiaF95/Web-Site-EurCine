@@ -27,6 +27,19 @@ When deployed, the app keeps read requests against the backend, but write reques
 - a new browser session starts from a clean state
 - closing the browser/tab removes the mock data stored in `sessionStorage`
 
+## Application areas
+
+The Angular routes are lazy-loaded from `src/app/app.routes.ts`:
+
+- public catalog and discovery: `/home`, `/film`, `/programmazione`, `/sale`, `/about`;
+- seat selection and ticket display: `/programmazione/:programmazioneId/sala` and `/ticket-show/:numeroOrdine`;
+- authenticated orders: `/ordini`;
+- admin film and programming management: `/admin/film/**` and `/admin/programmazione`.
+
+The `userAuthGuard` and `adminAuthGuard` protect the authenticated areas. In production, `AuthService`, `OrdineService`, `FilmManagementService` and `AdminProgrammazioneManagementService` can use `SessionSandboxService` for session-scoped writes, while catalog reads continue to use the backend API. The sandbox stores mock users, orders, film/programming changes and HTTP cache entries in `sessionStorage`; it is not a persistent database.
+
+The API base URL is selected by the environment files: local development points to `http://localhost:8080`, while the production build points to the deployed backend URL. Run `npm start` for the local Angular server and `npm run build` for the production build.
+
 ## Code scaffolding
 
 Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
